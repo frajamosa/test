@@ -1,0 +1,556 @@
+openapi: "3.0.3"
+info:
+  title: API Plataforma de Originación
+  version: "1.0.1"
+  description: "
+    # Resumen
+
+    Los servicios que se manejan dentro de esta API son:
+      * Seguridad
+
+    ## Observaciones generales de los tipos de datos
+
+    La definición de FISA Group de strings UTF-8 en el contexto de esta API tiene soporte para al menos los siguientes caracteres
+
+    a b c d e f g h i j k l m n o p q r s t u v w x y z
+
+    A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+
+    0 1 2 3 4 5 6 7 8 9
+
+    / - ? : ( ) . , ' +
+
+
+    Space"
+
+
+  license:
+    name: Fisa Group 1.0 International Public License
+    url: https://www.fisagroup.com/licenses/by/1.0/
+  #termsOfService: URL for Terms of Service of the API
+  contact:
+    name: Fisa Group
+    url: https://www.fisagroup.com/
+    email: info@fisagroup.com
+
+servers:
+  - url: http://localhost:9081
+    description: Generated server url
+
+security:
+  #####################################################
+  # Global security options
+  #####################################################
+  - {}
+
+tags:
+  #####################################################
+  # Predefined Tags to Group Methods
+  #####################################################
+
+  - name: Authenticate
+    description: |
+      El componente de autenticación
+        * Obtención del usuario y clave de acceso
+        
+  - name: Security
+    description: |
+      El componente de seguridad ofrece los siguientes servicios
+        * Obtención del token
+paths:
+
+  #####################################################
+  # Login
+  #####################################################
+  
+  /api/Authenticate/Login:
+    post:
+      tags:
+        - Authenticate
+      summary: Authenticate a User
+      description: "The Login API is used authenticate a user. \r\nThe issuer of the One Time Password will dictate if a JWT or a Refresh Token may be issued in the API response.\r\n<br></br>\r\nExample Request JSON\r\n\r\n    POST /Login\r\n    {\r\n       \"username\": \"user\",\r\n       \"password\": \"pass\",\r\n    }"
+      requestBody:
+        description: parametros modelo
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LoginModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LoginModel'
+      responses:
+        '200':
+          description: >-
+            The authentication was successful. The response will contain the
+            User object that was authenticated
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ResponseAuthenticate'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseAuthenticate'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ResponseAuthenticate'
+        '400':
+          description: >-
+            The request was invalid and/or malformed. The response will contain
+            an Errors JSON Object with the specific errors.
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ErrorHandler'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorHandler'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ErrorHandler'
+        '500':
+          description: >-
+            There was an internal error. A stack trace is provided and logged in
+            the FusionAuth log files. The response will be empty.
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+                
+  #####################################################
+  # Security Service
+  #####################################################
+  /v1/security/token:
+    get:
+      summary: Get token
+      description: |
+        Obtener un token de seguridad dependiendo del código de usuario y password enviado al servicio
+      operationId: getToken
+      tags:
+        - Security
+
+      parameters: []
+
+      responses:
+        '200':
+          $ref: "#/components/responses/OK_200_Token"
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"
+      
+
+components:
+  headers:
+    #####################################################
+    # Reusable Response Header Elements
+    #####################################################
+
+    tokenmcm:
+      schema:
+        type: string
+
+    Location:
+      description: |
+        Localización del recurso creado.
+      schema:
+        type: string
+        format: url
+      required: false
+
+  parameters:
+    #####################################################
+    # Predefined Parameters
+    #####################################################
+    legalId:
+      name: legalId
+      in: path
+      description: |
+        Identificación del Cliente
+
+        Posibles valores son:
+        * 0929359503
+
+      required: true
+      schema:
+        type: string
+
+    legalIdType:
+      name: legalIdType
+      in: path
+      description: |
+        Tipo de identificación
+
+        Posibles valores son:
+        * C - RUC
+        * R - Company
+      required: true
+      schema:
+        type: string
+        enum:
+          - C
+          - R
+
+
+  requestBodies:
+    #####################################################
+    # Reusable Request Bodies
+    #####################################################
+    applicationRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApplicationMessageRequest'
+
+
+  schemas:
+    #####################################################
+    # Login
+    #####################################################    
+    LoginModel:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        password:
+          type: string
+          example: xxxxx
+      additionalProperties: false
+      description: Login Model
+
+    ErrorHandler:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: Get Error Code return for Stored Procedure or Service
+          format: int32
+        messageError:
+          type: string
+          description: Get or Set Message error gived by the data source
+          nullable: true
+      additionalProperties: false
+      
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: {}
+      
+    ResponseAuthenticate:
+      type: object
+      properties:
+        token:
+          type: string
+          nullable: true
+        expiration:
+          type: string
+          format: date-time
+        serviceStatus:
+          $ref: '#/components/schemas/ErrorHandler'
+      additionalProperties: false      
+      
+    #####################################################
+    # Predefined Schemas
+    #####################################################      
+    ApplicationMessageRequest:
+      description: |
+        JSON request body para solicitudes de cliente
+      type: object
+      required:
+        - ReqMessage
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+
+
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    X-ConversationId:
+      description: |
+        Identificador único de la conversación del servicio.
+
+        Por cada servicio que interviene en la orquestación se tiene un id de conversación.
+
+      example: "59491c7e-ad88-49ec-a2ad-99ddcb1f5674"
+
+      type: string
+      format: uuid
+
+    X-ChannelId:
+      description: |
+        Id del canal desde el cual se se está invocando el servicio. 
+        Ítem de catálogo 139.
+
+        Ej. de osibles Valores:
+           "2"    BOTON PAGO
+           "3"    CAJA EXPRESS
+           "5"    CAJA EXTERNA
+      type: string
+      maxLength: 50
+      example: "2"
+      
+    X-CarDealerId:
+      description: |
+        Código del concesionario (Sucursal FISA System) desde donde se está generando el proceso de originación
+
+        Representa el código único asignado a la compañia con la cual se trabajar
+      example: 3
+      type: string
+      minLength: 0
+      maxLength: 20
+
+    X-UserId:
+      description: |
+        Código del usuario FISA System que está realizando el proceso
+        Registrado en la transacción 1/9.
+        Ítem catálogo catUser.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-SellerId:
+      description: |
+        Código del vendedor desde donde se está generando el proceso de originación
+        No definido en FISA System.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-BranchId:
+      description: |
+        Código de la sucursal FISA System desde cual se ejecuta la acción.
+        Registrada en la transacción 1/2.
+        Ítem catálogo catBranch.
+      example: 2
+      type: integer
+      format: int64
+
+    X-OfficeId:
+      description: |
+        Código de la oficina FISA System desde cual se ejecuta la acción.
+        Ítem catálogo catOffice.
+        Relacionada con la sucursal indicada en "branchid". 
+        Registrada en la transacción 1/2.
+      example: 1
+      type: integer
+      format: int64
+      
+    X-EnterpriseCode:
+      description: |
+        Código del Empresa o institución que invoca el servicio
+        No definido en FISA System.
+
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: MAF
+      
+    X-SysCode:
+      description: |
+        Código del Sistema que invoca el servicio.
+        No definido en FISA System.
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: SISCRED
+      
+    ######## FIN INFORMACION INYECCION SOLICITUD ORIGINACION
+
+    Info:
+      description: |
+        Información de cabecera requerida en los servicios como parte del mensaje
+      type: object
+      properties:
+        Consumer:
+          description: |
+            Información del consumidor del servicio
+          type: object
+          properties:
+            sysCode:
+              $ref: "#/components/schemas/X-SysCode"
+            enterpriseCode:
+              $ref: '#/components/schemas/X-EnterpriseCode'
+        Trace:
+          description: |
+            Información para seguimiento del servicio
+          type: object
+          required:
+            - userId
+            - carDealerId
+            - branchId
+            - officeId
+          properties:
+            conversationId:
+              $ref: '#/components/schemas/X-ConversationId'
+            userId:
+              $ref: '#/components/schemas/X-UserId'
+            carDealerId:
+              $ref: '#/components/schemas/X-CarDealerId'
+            sellerId:
+              $ref: '#/components/schemas/X-SellerId'
+            branchId:
+              $ref: '#/components/schemas/X-BranchId'
+            officeId:
+              $ref: '#/components/schemas/X-OfficeId'
+            channelId:
+              $ref: '#/components/schemas/X-ChannelId'
+
+    ReqHeader:
+      description: |
+        Cabecera para la invocación del servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+
+    ReqMessage:
+      description: |
+        Mensaje para invocación de servicios
+      type: object
+      properties:
+        ReqHeader:
+          $ref: '#/components/schemas/ReqHeader'
+
+        
+
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
+
+    errorTitle:
+      description: |
+        Descripcion corta leible por humanos del tipo de error. Puede estar en lenguaje local.
+      type: string
+      minLength: 0
+      maxLength: 70
+
+    errorDetail:
+      description: |
+        Texto detallado específico leible por humanos de esta instancia de error.
+
+        Además XPath puede se usado para apuntar a la novedad que está generando el error
+
+      type: string
+      minLength: 0
+      maxLength: 500
+
+    MessageCode400:
+      description: Códigos de mensajes definidos para Message por OMNIA para código de error HTTP 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - FORMAT_ERROR              #gen
+        - PARAMETER_NOT_CONSISTENT  #gen
+        - PARAMETER_NOT_SUPPORTED   #gen
+        - SERVICE_INVALID           #gen
+        - RESOURCE_UNKNOWN          #gen
+        - RESOURCE_EXPIRED          #gen
+        - RESOURCE_BLOCKED          #gen
+        - TIMESTAMP_INVALID         #gen
+        - PERIOD_INVALID            #gen
+        - SCA_METHOD_UNKNOWN        #gen
+        - SCA_INVALID               #gen
+        - CONSENT_UNKNOWN           #gen
+        
+    Error400:
+      description: |
+        Definición estandarizada para reportar información de errores acorde a [RFC7807] en caso de códigos HTTP 400 de OMNIA.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            Una referencia URI [RFC3986] que identifica el tipo de problema.
+          type: string
+          format: uri
+          minLength: 0
+          maxLength: 70
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        code:
+          $ref: "#/components/schemas/MessageCode400"
+        additionalErrors:
+          description: |
+            Lista de bloques de información de Error.
+
+            Puede ser usado si mas de un error va a ser comunicado
+          type: array
+          items: #ErrorInformation
+            description: Este es el elemento de datos para soportar la declaración de errores adicionales en el contexto de [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/errorTitle"
+              detail:
+                $ref: "#/components/schemas/errorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400"
+                
+  responses:
+
+    #################################
+    # Respuestas Afirmativas
+    #################################
+
+    OK_200_Token:
+      description: OK
+
+      
+    #################################
+    # Respuestas negativas
+    #################################
+
+    BAD_REQUEST_400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400"
+
+    UNAUTHORIZED_401:
+      description: Error de autenticación
+
+    FORBIDDEN_403:
+      description: Forbidden
+
+    INTERNAL_SERVER_ERROR_500:
+      description: Internal Server Error      

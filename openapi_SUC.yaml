@@ -1,0 +1,705 @@
+openapi: 3.0.1
+info:
+  title: API - Información General de Sucursales  (Concesionarios)
+  description: "
+    
+    Permite obtener la información de una Sucursal en particular y sus Oficinas.
+    
+  "
+  version: 1.0.0-SNAPSHOT
+servers:
+  - url: http://localhost:9082
+    description: Generated server url
+paths:
+  /branch/getBranch/request/{branchId}:
+    post:
+      tags:
+        - branch-rest-controller
+      summary: Obtener información de la sucursal.
+      operationId: getBranch
+
+      parameters:
+        - $ref: "#/components/parameters/branchId"
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrTBranchIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_BranchGet'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"    
+          
+
+components:
+  headers:
+    #####################################################
+    # Reusable Response Header Elements
+    #####################################################
+    tokenmcm:
+      schema:
+        type: string
+
+    Location:
+      description: |
+        Localización del recurso creado.
+      schema:
+        type: string
+        format: url
+      required: false
+
+  parameters:
+    #####################################################
+    # Predefined Parameters
+    #####################################################
+    branchId:
+      name: branchId
+      in: path
+      description: |
+        Código de la sucursal. 
+        * 8
+      required: true
+      schema:
+          type: integer
+
+  schemas:
+    BrTBranchIn:
+      type: object
+      description: |
+        Obtener información de la sucursal.
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+    BrTBranchOut:
+      type: object
+      description: |
+            Resultado de obtener información de la sucursal.
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object             
+          properties:
+            branch:
+              $ref: '#/components/schemas/OtrBranch'
+            office:
+              $ref: '#/components/schemas/OtrOffice'
+            officephone:
+              $ref: '#/components/schemas/OtrOfficephone'
+            messagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+    OtrBranch:
+      type: object
+      description: |
+            Información general de la sucursal.
+      properties:
+        idbranch:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal.
+            Registrada en la transacción 1/2.
+            Ítem catálogo catBranch.
+          example: 5            
+          nullable: false 
+        branchname:
+          type: string
+          description: |
+            Nombre de la sucursal.
+          example: AUTOMOTRIZ CARTONI
+          nullable: true           
+        superintendencycode:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal en la Superintendencia de Bancos.
+          example: 9
+          nullable: true          
+        employernumber:
+          type: string
+          description: |
+            Identificación.
+          example: 70000820K
+          nullable: true           
+        centralbankcode:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal registrado en Banco Central.
+          example: 9
+          nullable: true           
+        branchmnemonic:
+          type: string
+          description: |
+            Nemónico de la sucursal.
+          example: CAR
+          nullable: true           
+    OtrOffice:
+      type: object
+      description: |
+            Información general de la oficina.
+      properties:
+        idbranch:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal.
+          example: 5
+          nullable: true         
+        idoffice:
+          type: integer
+          format: int32
+          description: |
+            Código de la oficina de la sucursal.
+          example: 1
+          nullable: true          
+        typeofficecatalog:
+          type: integer
+          format: int32
+          description: |
+            Catálgo Tipo de de Oficina, por defecto 11.
+          enum: [11]
+          nullable: true           
+        typeoffice:
+          type: integer
+          format: int32
+          description: |
+            Tipo de de oficina, ítem del catálogo 11.
+          example: 3
+          nullable: true           
+        officename:
+          type: string
+          description: |
+            Nombre de la oficina.
+          example: CARTONI QUILLOTA
+          nullable: true           
+        addressone:
+          type: string
+          description: |
+            Dirección de la oficina 1.
+          example: FREIRE 926
+          nullable: true 
+        addresstwo:
+          type: string
+          description: |
+            Dirección de la oficina 2.
+          example: 
+          nullable: true 
+        addressthree:
+          type: string
+          description: |
+            Dirección de la oficina 3.
+          example: 
+          nullable: true 
+        citycatalog:
+          type: integer
+          format: int32
+          description: |
+            Código de catálogo de Ciudad, por defecto 1.
+          enum: [1]
+          example: 
+          nullable: true 
+        citycode:
+          type: integer
+          format: int32
+          description: |
+            Código de la Ciudad donde se encuentra la oficina, ítem del catálogo 1.
+          example: 516
+          nullable: true 
+        countrycatalog:
+          type: integer
+          format: int32
+          description: |
+            Código de catálogo del País, por defecto 65.
+          enum: [65]
+          nullable: true 
+        countrycode:
+          type: integer
+          format: int32
+          description: |
+            Código del País donde se encuentra la oficina, ítem del catálogo 65.
+          example: 160
+          nullable: true 
+        neighborhoodcatalog:
+          type: integer
+          format: int32
+          description: |
+            Código de catálogo del Barrio, por defecto 66.
+          enum: [66] 
+          nullable: true 
+        neighborhoodcode:
+          type: number
+          description: |
+            Código del Barrio donde se encuentra la oficina, ítem del catálogo 66.
+          example: 516
+          nullable: true 
+        swift:
+          type: string
+          description: |
+            Código swift de la oficina.
+          example: 
+          nullable: true 
+        telex:
+          type: string
+          description: |
+            Telex de la oficina.
+          example: 
+          nullable: true 
+        codeiso:
+          type: string
+          description: |
+            Codigo ISO para la oficina.
+          example: 39
+          nullable: true 
+    OtrOfficephone:
+      type: object
+      description: |
+            Teléfonos de la Oficina. 
+      properties: 
+        idbranch:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal.
+          example: 5
+          nullable: true 
+        idoffice:
+          type: integer
+          format: int32
+          description: |
+            Código de la oficina.
+          example: 1
+          nullable: true 
+        phonenumber:
+          type: string
+          description: |
+            Número telefónico de la oficina.
+          example: 56565656
+          nullable: true 
+        typephonenumber:
+          type: string
+          description: |
+            Tipo de número de teléfono.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERIOR.
+          nullable: true 
+    OtrWarnigs:
+      type: object
+      description: |
+            Detalle de mensajes generados durante el procesamiento del servicio.
+      properties:
+        message:
+          type: string
+          description: Texto del mensaje.
+
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    BrTBranchResponse:
+      description: |
+        Response Body de Deuda del Cliente
+      type: object
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          $ref: '#/components/schemas/BrTBranchOut'
+            
+
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    X-ConversationId:
+      description: |
+        Identificador único de la conversación del servicio.
+
+        Por cada servicio que interviene en la orquestación se tiene un id de conversación.
+
+      example: "59491c7e-ad88-49ec-a2ad-99ddcb1f5674"
+
+      type: string
+      format: uuid
+
+    X-ChannelId:
+      description: |
+        Id del canal desde el cual se se está invocando el servicio. 
+        Ítem de catálogo 139.
+
+        Ej. de osibles Valores:
+           "2"    BOTON PAGO
+           "3"    CAJA EXPRESS
+           "5"    CAJA EXTERNA
+      type: string
+      maxLength: 50
+      example: "2"
+      
+    X-CarDealerId:
+      description: |
+        Código del concesionario (Sucursal FISA System) desde donde se está generando el proceso de originación
+
+        Representa el código único asignado a la compañia con la cual se trabajar
+      example: 3
+      type: string
+      minLength: 0
+      maxLength: 20
+
+    X-UserId:
+      description: |
+        Código del usuario FISA System que está realizando el proceso
+        Registrado en la transacción 1/9.
+        Ítem catálogo catUser.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-SellerId:
+      description: |
+        Código del vendedor desde donde se está generando el proceso de originación
+        No definido en FISA System.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-BranchId:
+      description: |
+        Código de la sucursal FISA System desde cual se ejecuta la acción.
+        Registrada en la transacción 1/2.
+        Ítem catálogo catBranch.
+      example: 2
+      type: integer
+      format: int64
+
+    X-OfficeId:
+      description: |
+        Código de la oficina FISA System desde cual se ejecuta la acción.
+        Ítem catálogo catOffice.
+        Relacionada con la sucursal indicada en "branchid". 
+        Registrada en la transacción 1/2.
+      example: 1
+      type: integer
+      format: int64
+      
+    X-EnterpriseCode:
+      description: |
+        Código del Empresa o institución que invoca el servicio
+        No definido en FISA System.
+
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: MAF
+      
+    X-SysCode:
+      description: |
+        Código del Sistema que invoca el servicio.
+        No definido en FISA System.
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: SISCRED
+      
+    ######## FIN INFORMACION INYECCION SOLICITUD ORIGINACION
+
+    Info:
+      description: |
+        Información de cabecera requerida en los servicios como parte del mensaje
+      type: object
+      properties:
+        Consumer:
+          description: |
+            Información del consumidor del servicio
+          type: object
+          properties:
+            sysCode:
+              $ref: "#/components/schemas/X-SysCode"
+            enterpriseCode:
+              $ref: '#/components/schemas/X-EnterpriseCode'
+        Trace:
+          description: |
+            Información para seguimiento del servicio
+          type: object
+          required:
+            - userId
+            - carDealerId
+            - branchId
+            - officeId
+          properties:
+            conversationId:
+              $ref: '#/components/schemas/X-ConversationId'
+            userId:
+              $ref: '#/components/schemas/X-UserId'
+            carDealerId:
+              $ref: '#/components/schemas/X-CarDealerId'
+            sellerId:
+              $ref: '#/components/schemas/X-SellerId'
+            branchId:
+              $ref: '#/components/schemas/X-BranchId'
+            officeId:
+              $ref: '#/components/schemas/X-OfficeId'
+            channelId:
+              $ref: '#/components/schemas/X-ChannelId'
+
+    Result:
+      description: |
+        Resultado de la invocación al servicio
+      type: object
+      required:
+        - status
+        - description
+      properties:
+        status:
+          description: |
+            Estado de la ejecución del servicio
+
+            Los posible valores que puede tener este campo son:
+            - SUCCESS
+            - ERROR
+          type: string
+          enum:
+            - SUCESSS
+            - ERROR
+        description:
+          description: |
+            Descripción del resultado de la invocación al servicio.
+            Puede ser algún texto indicando el resultado
+          type: string
+
+        SourceError:
+          description: |
+            Información en caso de error presentado en el servicio invocado
+          type: object
+          properties:
+            code:
+              description: Código de error devuelto
+              type: string
+            description:
+              description: |
+                Descripción del error devuelto por el servicio invocado
+              type: string
+              
+    ReqHeader:
+      description: |
+        Cabecera para la invocación del servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+
+    RspHeader:
+      description: |
+        Cabecera de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+        Result:
+
+          $ref: '#/components/schemas/Result'
+          
+    ReqMessage:
+      description: |
+        Mensaje para invocación de servicios
+      type: object
+      properties:
+        ReqHeader:
+          $ref: '#/components/schemas/ReqHeader'
+
+    RspMessage:
+      description: |
+        Mensaje de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        RspHeader:
+          $ref: '#/components/schemas/RspHeader'
+
+
+        
+
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
+
+    errorTitle:
+      description: |
+        Descripcion corta leible por humanos del tipo de error. Puede estar en lenguaje local.
+      type: string
+      minLength: 0
+      maxLength: 70
+
+    errorDetail:
+      description: |
+        Texto detallado específico leible por humanos de esta instancia de error.
+
+        Además XPath puede se usado para apuntar a la novedad que está generando el error
+
+      type: string
+      minLength: 0
+      maxLength: 500
+
+    MessageCode400:
+      description: Códigos de mensajes definidos para código de error HTTP 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - FORMAT_ERROR              #gen
+        - PARAMETER_NOT_CONSISTENT  #gen
+        - PARAMETER_NOT_SUPPORTED   #gen
+        - SERVICE_INVALID           #gen
+        - RESOURCE_UNKNOWN          #gen
+        - RESOURCE_EXPIRED          #gen
+        - RESOURCE_BLOCKED          #gen
+        - TIMESTAMP_INVALID         #gen
+        - PERIOD_INVALID            #gen
+        - SCA_METHOD_UNKNOWN        #gen
+        - SCA_INVALID               #gen
+        - CONSENT_UNKNOWN           #gen
+        
+    Error400:
+      description: |
+        Definición estandarizada para reportar información de errores acorde a [RFC7807] en caso de códigos HTTP 400.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            Una referencia URI [RFC3986] que identifica el tipo de problema.
+          type: string
+          format: uri
+          minLength: 0
+          maxLength: 70
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        code:
+          $ref: "#/components/schemas/MessageCode400"
+        additionalErrors:
+          description: |
+            Lista de bloques de información de Error.
+
+            Puede ser usado si mas de un error va a ser comunicado
+          type: array
+          items: #ErrorInformation
+            description: Este es el elemento de datos para soportar la declaración de errores adicionales en el contexto de [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/errorTitle"
+              detail:
+                $ref: "#/components/schemas/errorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400"
+                
+  responses:
+    #################################
+    # Respuestas Afirmativas
+    #################################
+
+    OK_200_BranchGet:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BrTBranchResponse'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/getBrachExample"        
+
+    
+    #################################
+    # Respuestas negativas
+    #################################
+
+    BAD_REQUEST_400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400"
+
+    UNAUTHORIZED_401:
+      description: Error de autenticación
+
+    FORBIDDEN_403:
+      description: Forbidden
+
+    INTERNAL_SERVER_ERROR_500:
+      description: Internal Server Error            
+
+
+  examples:
+    getBrachExample:
+      summary: Consulta información de una sucursal
+      description: Consulta información de una sucursal
+      value: {}

@@ -1,0 +1,2658 @@
+openapi: 3.0.1
+info:
+  title: API - Administración de Garantías
+  description: Servicio de Garantías
+  version: 1.0.0-SNAPSHOT
+servers:
+  - url: http://localhost:9081
+    description: Generated server url
+paths:
+  /guarantee/valLegalGuaran:
+    post:
+      tags:
+        - guarantee-rest-controller
+      summary: Validar Datos de Legalización de la Garantía
+      operationId: valLegalGuaran
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuaranteeValLegalGuaranIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_ValLegalGuaran'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"
+          
+  /guarantee/valGuarantee:
+    post:
+      tags:
+        - guarantee-rest-controller
+      summary: Valida Garantía
+      operationId: valGuarantee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuaraUaranteeIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_ValGuarantee'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500" 
+          
+  /guarantee/postGuarantee:
+    post:
+      tags:
+        - guarantee-rest-controller
+      summary: Crea Garantías y las relaciona con el Préstamo
+      operationId: postGuarantee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuarGuaranteeIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_PostGuarantee'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500" 
+          
+  /guarantee/legalAccounting:
+    post:
+      tags:
+        - guarantee-rest-controller
+      summary: Legalizar y contabilizar Garantía
+      operationId: legalAccounting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuaranteeLegalAccountingIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_LegalAccounting'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"  
+          
+  /guarantee/getParam:
+    post:
+      tags:
+        - guarantee-rest-controller
+      summary: Cargar Parametrización de Garantías FISA System
+      operationId: getParam
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuaranteeGetParamIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_GetParam'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"   
+          
+components:
+  schemas:
+    GuaranteeValLegalGuaranIn:
+      type: object
+      description: Validar Datos de Legalización de la Garantía
+      required:
+        - ReqMessage
+        - Envelop      
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object
+          properties:      
+            pcbLanguageid: 
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            pnbBranchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false
+            pnbOfficeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            pnbDeptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            pcbTerminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false        
+            pniUser:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false       
+            pciDeferred:
+              type: string
+              description: |
+                Indica si se está trabajando en horario diferido o no.
+              enum: [N] # Valores permitidos: "S" para sí, "N" para no
+              example: "N"
+              nullable: false          
+            pdiProcessdate:
+              type: string
+              format: date # Este es el formato estándar para fechas
+              pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+              description: |
+                Fecha proceso.
+              example: "2024/05/20"
+              nullable: false          
+            pciAction:
+              type: string
+              description: |
+                Acción a ejecutar.
+              enum: ["4"] # Valores permitidos: "4" Validar datos de legalización de la garantía
+              example: 4
+              nullable: false          
+            prbGuarantee:
+              $ref: '#/components/schemas/OtrGuarantee'
+            ptbGuaranteeope:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeOperation'
+            ptbGuaranteeinfo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeInfo'
+            ptbGuaranteeleg:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeLegalize'
+            ptiInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptiReqcli:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTreqCusPrdRel'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+    OtrGuarantee:
+      type: object
+      description: |
+                Información de los valores o montos de la garantía y parámetros de validación.
+      properties:
+        requestId:
+          type: number
+          description: |
+                Número de solicitud.
+          example: 1
+          nullable: true
+        guaranteeOpAmount:
+          type: number
+          description: |
+                Valor de la garantía.
+          example: 120000000
+          nullable: true          
+        guaranteeOpCurrency:
+          type: integer
+          format: int32
+          description: |
+                Moneda del valor de la garantía.
+                Ítem del catálogo catCurrency
+          example: 0
+          nullable: false          
+        guaranteeTotAdmissibleamt:
+          type: number
+          description: |
+                Valor Admisible de la garantía.
+          example:  84000000     
+          nullable: false         
+        guaranteeTotMarketamt:
+          type: number
+          description: |
+                Monto total del valor admisible de la garantía. Suma de todos los valores admisibles de las garantías.
+          example:  84000000
+          nullable: true 
+        guaranteeTotBalance:
+          type: number
+          description: |
+                Monto total del saldo de la garantía. Suma de los saldos de las garantías.
+          example:  84000000
+          nullable: true          
+        guaranteeTypeAllowed:
+          type: string
+          description: |
+                Tipos de garantías permitidos, los definidos en 28/1002 Bienes por Garantía. 
+                Ítem catálogo 33.
+          example:  2
+          nullable: true                    
+        guaranteeOpLegalized:
+          type: string
+          description: |
+                Indicador para validar que todas las garantías se encuentren legalizadas para relacionarlas al préstamo.
+          enum: ["1", "0"] # Valores permitidos: "1" para sí, "0" para no. Por defecto 0. 
+          example:  1
+          nullable: true                    
+        guaranteeInsurance: 
+          type: string
+          description: |
+                Indicador para añadir seguros a la garantía.
+          enum: ["1", "0"] # Valores permitidos: "1" para sí, "0" para no. Por defecto 0.          
+          example:  0
+          nullable: true                    
+        guaranteePrincipal:
+          type: integer
+          format: int32
+          description: |
+                Identifica si es o no la garantía principal. Corresponde al tipo de bien de la Línea de Crédito / compromiso relacionado.
+          example:  
+          nullable: true                    
+        pledge:
+          type: string
+          description: |
+                No aplica. Garantía exige pignoración.
+          enum: ["1", "0"] # Valores permitidos: "1" para sí, "0" para no. Por defecto 0.
+          example:  1
+          nullable: true                    
+        pledgePercentage:
+          type: number
+          description: |
+                Porcentaje mínimo de pignoración.
+          minimum: 0
+          maximum: 100
+          example: 30
+          nullable: true                    
+        pledgeTotAmount:
+          type: number
+          description: |
+                Monto a pignorar.
+          example: 36000000
+          nullable: true                    
+        branch:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal FISA System desde cual se ejecuta la acción.
+            Registrada en la transacción 1/2.
+            Ítem catálogo catBranch.
+          example: 2
+          nullable: false                    
+        office:
+          type: integer
+          format: int32
+          description: |
+            Código de la oficina FISA System desde cual se ejecuta la acción.
+            Ítem catálogo catOffice.
+            Relacionada con la sucursal indicada en "branchid". 
+            Registrada en la transacción 1/2.
+          example: 1
+          nullable: false                   
+    OtrGuaranteeInfo:
+      type: object
+      description: |
+                Información de la garantía.
+      properties:
+        requestId:
+          type: string
+          description: |
+                (Garantía nuevas) Número de solicitud.
+          example: 1
+          nullable: true             
+        customerSeq:
+          type: number
+          description: |
+                (Garantía nuevas) Código del cliente dueño de la garantía.
+                Registrado en la transacción 2/2.
+                Ítem catálogo catClient.
+          example: 767857
+          nullable: false
+        guaranteeSeq:
+          type: number
+          description: |
+                (Garantía nuevas) Número de garantía, secuencial único por cliente.
+          example: 2
+          nullable: true             
+        clientId:
+          type: integer
+          format: int32
+          description: |
+                (Garantía existente) Código del cliente dueño de la garantía.
+                Registrado en la transacción 2/2.
+                Ítem catálogo catClient. 
+          example: 767857
+          nullable: false   
+        guaranteeId:
+          type: integer
+          format: int32
+          description: |
+                (Garantía existente) Número de garantía, secuencial único por cliente.
+          example: 2
+          nullable: false
+        guaranteeFormat:
+          type: string
+          description: |
+                (Información general) Formato de acuerdo al tipo de garantía. 
+                Registrado en la transacción 28/1002.
+          example: "V"
+          nullable: false
+        guaranteeType:
+          type: integer
+          format: int32
+          description: |
+                (Información general) Código del tipo de garantía. Ítem catálogo 33.
+          example: 2
+          nullable: false
+        ownershipType:
+          type: integer
+          format: int32
+          description: |
+                (Información general) Código del tipo de bien. Ítem catálogo 22.
+          example: 40
+          nullable: false
+        description:
+          type: string
+          description: |
+                (Información general) Descripción de la garantía.
+          example: "NEW RAV4 Lujo 2.0 4x2 (STD)"
+          nullable: false
+        admissibleAmount:
+          type: number
+          description: |
+                (Información general) Valor admisible de una garantía.
+          example: 500000
+          nullable: false
+        currency:
+          type: number
+          description: |
+                (Información general) Moneda de la garantía.
+                Ítem catálogo catCurrency.
+          example: 0
+          nullable: false
+        balance:
+          type: number
+          description: |
+                (Información general) Saldo de la garantía.
+          example: 500000
+          nullable: false
+        balanceOpccy:
+          type: number
+          description: |
+                (Información general) Valor del saldo de la garantía en moneda de la operación.
+          example: 500000
+          nullable: false
+        comments:
+          type: string
+          description: |
+                (Información general) Campo para registrar alguna observación con respecto a la garantía.
+          example: "Test"
+          nullable: false
+        coversPolicy:
+          type: string
+          description: |
+                (Información general) Indicador para garantías amparadas por póliza de incendio.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "N"
+          nullable: false
+        classification:
+          type: integer
+          format: int32
+          description: |
+                (Información general) Código de clasificación de la garantía de acuerdo a su polivalencia.
+                Registrado en la transacción 28/1001.
+          example: 13
+          nullable: false
+        marketAmount:
+          type: number
+          description: |
+                (Información general) Valor del avalúo de una garantía.
+          example: 500000
+          nullable: false
+        signature:
+          type: string
+          description: |
+                Información general) Marca que indica si el tipo de bien por garantía es sobre firmas.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "N"
+          nullable: false
+        adrLocalityLevel1:
+          type: number
+          description: |
+                (Garantías hipotecarias - dirección) Código de País, ítem del catálogo 65.
+          example: 160
+          nullable: true
+        adrLocalityLevel2:
+          type: number
+          description: |
+                Garantías hipotecarias - dirección) Código de la Ciudad, ítem del catálogo 1.
+          example: 510
+          nullable: true
+        adrLocalityLevel3:
+          type: number
+          description: |
+                (Garantías hipotecarias - dirección) Código del Barrio, ítem del catálogo 66.
+          example: 1004
+          nullable: true
+        adrLocalityLevel4:
+          type: number
+          description: |
+                No aplica.
+          nullable: true
+        adrLocalityLevel5:
+          type: number
+          description: |
+                No aplica.
+          nullable: true
+        adrLocalityLevel6:
+          type: number
+          description: |
+                No aplica.
+          nullable: true
+        address:
+          type: string
+          description: |
+                (Garantías hipotecarias - dirección) Dirección de la ubicación del bien a hipotecar.
+          example: "ALTOS DEL TORREON"
+          nullable: true
+        adrGroup:
+          type: string
+          description: |
+                (Garantías hipotecarias - dirección) Urbanización en la que se encuentra la garantía.
+          example: 
+          nullable: true
+        adrBlock:
+          type: string
+          description: |
+                (Garantías hipotecarias - dirección) Manzano en la que se encuentra la garantía.
+          example: 10
+          nullable: true
+        adrLot:
+          type: string
+          description: |
+                (Garantías hipotecarias - dirección) Lote en la que se encuentra la garantía.
+          example: 5
+          nullable: true
+        adrLocationArea:
+          type: string
+          description: |
+                (Garantías hipotecarias - dirección) Zona geográfica de la ubicación del bien hipotecado.
+          example: 
+          nullable: true
+        hpLandMts:
+          type: number
+          description: |
+                (Garantías hipotecarias) Metros de construcción.
+          example: 400
+          nullable: true
+        hpConstructionMts:
+          type: number
+          description: |
+                (Garantías hipotecarias) Metros del terreno.
+          example: 250
+          nullable: true
+        hpMarketAmount:
+          type: number
+          description: |
+                (Garantías hipotecarias) Valor de la construcción.
+          example: 1530000
+          nullable: true
+        hpLandAmount:
+          type: number
+          description: |
+                (Garantías hipotecarias) Valor del terreno.
+          example: 830000
+          nullable: true
+        hpConstructionAmount:
+          type: number
+          description: |
+                (Garantías hipotecarias) Valor de la garantía.
+          example: 700000
+          nullable: true
+        hpPropertyCardNumber:
+          type: string
+          description: |
+                (Garantías hipotecarias) Número de tarjeta de propiedad.
+          example: 
+          nullable: true
+        hpDateRegisMortgage:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Garantías hipotecarias) Fecha de inscripción de la hipoteca.
+          example: "2023/12/29"
+          nullable: true
+        vhTypeCat:
+          type: integer
+          format: int32
+          description: |
+                (Garantías vehículos) Código catálogo del tipo de vehículo.
+          enum: [192]
+          nullable: false
+        vhType:
+          type: integer
+          format: int32
+          description: |
+                (Garantías vehículos) Código del tipo de vehículo. Ítem del catálogo 192.
+          example: 5
+          nullable: false
+        vhModel:
+          type: string
+          description: |
+                (Garantías vehículos) Modelo del vehículo.
+          example: 4RUNNER
+          nullable: false
+        vhBrand:
+          type: string
+          description: |
+                (Garantías vehículos) Marca del vehículo.
+          example: TOYOTA
+          nullable: false
+        vhYear:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Garantías vehículos) Año del vehículo.
+          example: 2022
+          nullable: false
+        vhPlate:
+          type: string
+          description: |
+                (Garantías vehículos) Número de placa del vehículo.
+          example: "CV JB-75"
+          nullable: false
+        vhNumberMotor:
+          type: string
+          description: |
+                (Garantías vehículos) Número de motor del vehículo.
+          example: "234324 34324312VAD"
+          nullable: false
+        vhChassisNumber:
+          type: string
+          description: |
+                (Garantías vehículos) Número de chasis del vehículo.
+          example: "044500000"
+          nullable: false
+        vhColor:
+          type: string
+          description: |
+                (Garantías vehículos) Color del vehículo.
+          example: "GRIS METALICO"
+          nullable: false
+        vhAmount:
+          type: number
+          description: |
+                (Garantías vehículos) Valor del vehículo.
+          example: 38000000
+          nullable: false
+        vhDepositaryName:
+          type: string
+          description: |
+                (Garantías vehículos) Nombre del depositario del vehículo.
+          example: "JUAN PEREZ"
+          nullable: false
+        vhSerialNumber:
+          type: string
+          description: |
+                (Garantías vehículos) Número de matrícula del vehículo.
+          example: "2323233"
+          nullable: false
+        dtvInstitution: 
+          type: string
+          description: |
+                (Garantías de Depósito a Plazo Fijo DPF) Institución que emite el DPF.
+          example: "BANCO EDWARDS"
+          nullable: true
+        dtvIssueDate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Garantías DPF) Fecha de emisión del DPF.
+          example: "2023/10/13"
+          nullable: true
+        dtvMaturityDate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description:  |
+                (Garantías DPF) Fecha de vencimiento del DPF.
+          example: "2024/10/13"
+          nullable: true
+        dtvAmount:
+          type: number
+          description:  |
+                (Garantías DPF) Valor del DPF.
+          example: 2500000
+          nullable: true
+        dtvInstitIssuerCat:
+          type: integer
+          format: int32
+          description:  |
+                (Garantías DPF) Catálogo de Instituciones que emiten DPF.
+          enum: [2, 3, 4, 5, 6, 9] # Valores permitidos: 2 - Bancos  Cod. Super - Iban, 3 - Financieras, 4 - Mutualistas/Asociaciones, 5 - Compañias Tarjeta Credito, 6 - Agentes De Cambio, 9 - Agentes De Bolsa
+          example: 2
+          nullable: true
+        dtvInstitutionIssuer:
+          type: integer
+          format: int32
+          description:  |
+                (Garantías DPF) Cógido de la institución emisora. Ítem del catálogo indicado en dtvInstitIssuerCat.
+          example: 29
+          nullable: true
+        dtvEndorsementAmount:
+          type: number
+          description:  |
+                (Garantías DPF) Valor endoso.
+          example: 2500000
+          nullable: true
+        dtvDocumentNumber:
+          type: string
+          description:  |
+                (Garantías DPF) Numero del documento (DPF, TITVAL, etc).
+          example: "500456"
+          nullable: true
+        dtvLegalId:
+          type: string
+          description:  |
+                (Garantías DPF) Número de Identificación de la Entidad Emisora.
+          example: "7123123123"
+          nullable: true
+        dtvTypeLegalId:
+          type: string
+          description:  |
+                (Garantías DPF) Tipo de Identificación de la Entidad Emisora.
+          example: "R"
+          nullable: true
+        dtvBeneficiary:
+          type: string
+          description: |
+                (Garantías DPF) Nombre del beneficiario del DPF.
+          example: "MARIA RUEDA DE PEREZ"
+          nullable: true
+        waMarketAmount:
+          type: number
+          description: |
+                (Garantías Mercadería) Valor comercial de lo almacenado.
+          example: 2300000
+          nullable: true
+        waWarrant:
+          type: string
+          description: |
+                No aplica.
+          nullable: true
+        waPlegdeBond:
+          type: number
+          description: |
+                (Garantías Mercadería) Número de bono prenda que emite la almacenera por el valor almacenado.
+          example: 2345
+          nullable: true
+        waIssueDateBond:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Garantías Mercadería) Fecha de emisión del bono.
+          example: "2023/01/01"
+          nullable: true
+        waMaturityDateBond:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Garantías Mercadería) Fecha de vencimiento del bono.
+          example: "2025/01/01"
+          nullable: true
+        waStorehouseCat:
+          type: integer
+          format: int32
+          description: |
+                (Garantías Mercadería) Código catálogo de alamacenaras.
+          enum: [191]
+          nullable: true
+        waStorehouseCod:
+          type: integer
+          format: int32
+          description: |
+                (Garantías Mercadería) Código de la almacenera.
+          example: 1
+          nullable: true
+        waMerchandiseType:
+          type: string
+          description: |
+                (Garantías Mercadería) Tipo de mercadería.
+          example: "EQUIPO INDUSTRIAL"
+          nullable: true
+        waRelation:
+          type: string
+          description: |
+                (Garantías Mercadería) Relación.
+          example: 
+          nullable: true
+        waBondAmount:
+          type: number
+          description: |
+                (Garantías Mercadería) Monto del Bono.
+          example: 
+          nullable: true
+        waAmountEndorsement:
+          type: number
+          description: |
+                (Garantías Mercadería) Monto del endoso.
+          example: 
+          nullable: true
+        waRate:
+          type: number
+          description: |
+                (Garantías Mercadería) Tasa.
+          example: 
+          nullable: true
+        waEndorsement:
+          type: string
+          description: |
+                (Garantías Mercadería) Endosado.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "N"
+          nullable: true
+        waDepositCertificate:
+          type: string
+          description: |
+                (Garantías Mercadería) Certificado depósito almacenera.
+          example: "PRENDA"
+          nullable: true
+        acInstitutionAction:
+          type: string
+          description: |
+                (Garantías Acciones) Institución que emite la acción.
+          example: "BANCO SANTANDER"
+          nullable: true
+        acMarketAmount:
+          type: number
+          description: |
+                (Garantías Acciones) Valor de la acción en el mercado.
+          example: 402500
+          nullable: true
+        acAmount:
+          type: number
+          description: |
+                (Garantías Acciones) Valor de la acción.
+          example: 402500
+          nullable: true
+        acNominalAmount:
+          type: number
+          description: |
+                (Garantías Acciones) Valor nominal de la acción.
+          example: 402500
+          nullable: true
+        acDocumentNumber:
+          type: string
+          description: |
+                (Garantías Acciones) Número de Documento con que se constituye la acción.
+          example: "CERTIFICADO NRO.10"
+          nullable: true
+        mqAmount:
+          type: number
+          description: |
+                (Garantías Maquinaria) Valor de la prenda.
+          example: 25895000
+          nullable: true
+        mqDescription:
+          type: string
+          description: |
+                (Garantías Maquinaria) Descripcíon de la garantía prendaria.
+          example: "EQUIPO INDUSTRIAL"
+          nullable: true
+        mqItemNumber:
+          type: integer
+          format: int32
+          description: |
+                (Garantías Maquinaria) Número de Partida.
+          example: 10275
+          nullable: true
+        mqIssueDate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Garantías Maquinaria) Fecha de emisión.
+          example: "2023/05/30"
+          nullable: true
+        pigSourceModule:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Módulo al que pertenece la cuenta origen de la pignoración.
+          example: 6
+          nullable: true
+        pigSourceAccount:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Cuenta origen de la pignoración.
+          example: 6001934329
+          nullable: true
+        pigRequestSec:
+          type: number
+          description: |
+                (Pignoraciones)
+          example: 1
+          nullable: true
+        pigPledgeModule:
+          type: integer
+          format: int32
+          description: |
+            (Pignoraciones) Módulo al que pertenece la cuenta pignorada.
+          example: 4
+          nullable: true
+        pigPledgeAccount:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Cuenta pignorada.
+          example: 4567567010
+          nullable: true
+        pigReference:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Referencia de la pignoración.
+          example: 1
+          nullable: true
+        pigDate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Pignoraciones) Fecha de la pignoración.
+          example: "2023/07/14"
+          nullable: true
+        pigBranch:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Código sucursal en la que se realiza la pignoración.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+          example: 2                
+          nullable: true
+        pigOffice:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Código oficina en la que se realiza la pignoración.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+          example: 1                
+          nullable: true
+        pigAmount:
+          type: number
+          description: |
+                (Pignoraciones) Valor pignorado.
+          example: 10000
+          nullable: true
+        pigType:
+          type: string
+          description: |
+                (Pignoraciones) Tipo de pignoración.
+          enum: [F, V, B] # Valores permitidos: F-FIJO, V-VARIABLE.
+          example: F
+          nullable: true
+        pigCause:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Código de Causa para la pignoración.
+                ítem catálgo 94.
+          example: 11
+          nullable: true
+        pigCauseCat:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Código de tabla de Causas para la pignoración.
+                Por defecto 94.
+          enum: [94]
+          nullable: true
+        pigSpread:
+          type: number
+          description: |
+                (Pignoraciones) Margen porcentual para pignoración.
+          example: 0,000000
+          nullable: true
+        pigExpireDate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Pignoraciones) Fecha de caducidad de la pignoración.
+          example: "2030/01/01"
+          nullable: true
+        pigPriority:
+          type: integer
+          format: int32
+          description: |
+                (Pignoraciones) Prioridad para pignoración.
+          example: 
+          nullable: true
+        avlDate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Avalúo) Fecha en la que se registró el avalúo.
+          example: "2023/12/01"
+          nullable: true
+        avlUserId:
+          type: integer
+          format: int32
+          description: |
+                (Avalúo) Código del usuario avaluador.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+          example: 157                  
+          nullable: true
+        datefrom:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Histórico) Fecha desde de la vigencia del registro.
+          example: "2022/01/17"
+          nullable: false
+        dateto:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Histórico) Fecha hasta de la vigencia del registro.
+          example: 
+          nullable: true
+        userId:
+          type: integer
+          format: int32
+          description: |
+                (Auditoría) Código del usuario FISA System.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+          example: 157                
+          nullable: false
+    OtrGuaranteeLegalize:
+      type: object
+      description: |
+        Información para Legalizar Garantías. Es requerida cuando el prbGuarantee.guaranteeOpLegalized es 1.
+      properties:
+        requestId:
+          type: string
+          description: |
+            Código del número de solicitud.
+            example: 1
+          nullable: true
+        customerSeq:
+          type: number
+          description: |
+            Código del cliente dueño de la garantía
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 767857           
+          nullable: true
+        guaranteeSeq:
+          type: number
+          description: |
+            Número de garantía, secuencial único por cliente.
+          example: 1
+          nullable: true
+        requestSeq:
+          type: number
+          description: |
+            Número de la operación a garantizar.
+          example: 6001934329
+          nullable: true
+        branch:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal FISA System desde cual se ejecuta la acción.
+            Registrada en la transacción 1/2.
+            Ítem catálogo catBranch.
+          example: 2
+          nullable: true
+        office:
+          type: integer
+          format: int32
+          description: |
+            Código de la oficina FISA System desde cual se ejecuta la acción.
+            Ítem catálogo catOffice.
+            Relacionada con la sucursal indicada en "branchid". 
+            Registrada en la transacción 1/2.
+          example: 1            
+          nullable: true
+        testimony:
+          type: string
+          description: |
+            Número de testimonio de la garantía.
+          example: 11934
+          nullable: true
+        notary:
+          type: string
+          description: |
+            Notario que registra la garantía.
+          example: "ALBERTO ROJAS"
+          nullable: true
+        notaryOffice:
+          type: string
+          description: |
+            Notaria en donde se registra la garantía.
+          example: "6TA"  
+          nullable: true
+        protocolDate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de protocolizacion de la garantía.
+          example: "2022/04/16"  
+          nullable: true
+        degree:
+          type: integer
+          format: int32
+          description: |
+            Grado de la garantía.
+          example: 1
+          nullable: true
+        mortgage:
+          type: string
+          description: |
+            Número de hipoteca.
+          example: 525
+          nullable: true
+        formalizeDate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de inscripcion de la garantía.
+          example: "2022/04/20"
+          nullable: true
+        clientId:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: true
+        guaranteeId:
+          type: integer
+          format: int32
+          description: |
+            Número de garantia.
+          example: 1            
+          nullable: true
+        operationId:
+          type: integer
+          format: int32
+          description: |
+            Número de cuenta.
+            Ítem catálogo catLoan.
+          example: 6001934329            
+          nullable: true
+        operationModule:
+          type: integer
+          format: int32
+          description: |
+            Módulo de la cuenta.
+            Ítem catálogo catModule.
+          example: 6  
+          nullable: true
+    OtrGuaranteeOperation:
+      type: object
+      description: |
+                Detalle de las operacion(es) que respaldan la(s) garantí(as)
+      properties:
+        requestId:
+          type: string
+          description: |
+                Código del número de solicitud.
+          example: 1
+          nullable: false
+        requestSeq:
+          type: number
+          description: |
+                Null cuando es solicitud o número de la operación a garantizar.
+          example: 6001934329
+          nullable: false          
+        operationModule:
+          type: integer
+          format: int32
+          description: |
+                Código del módulo de la operación a garantizar.
+                Ítem catálogo catModule.
+          example: 6
+          nullable: false
+        operationProduct:
+          type: integer
+          format: int32
+          description: |
+                Código del producto de la operación a garantizar.
+                Ítem catálogo catProduct.
+          example: 5
+          nullable: false
+        operationType:
+          type: integer
+          format: int32
+          description: |
+                Código del tipo de producto de la operación a garantizar.
+                Ítem catálogo catTypeProduct.
+          example: 1
+          nullable: false
+        operationCurrency:
+          type: integer
+          format: int32
+          description: |
+                Código de la moneda de la operación a garantizar.
+                Ítem catálogo catCurrency.
+          example: 0
+          nullable: false
+        operationAmount:
+          type: number
+          description: |
+                Monto de la operación.
+          example: 5000000
+          nullable: false
+        guaranteeOpCurrency:
+          type: integer
+          format: int32
+          description: |
+                Código de la moneda de la garantía.
+                Ítem catálogo catCurrency.
+          example: 0
+          nullable: false
+        guaranteeOpAmount:
+          type: number
+          description: |
+                Monto de la garantía.
+          example: 5000000
+          nullable: false
+        commitmentNumber:
+          type: integer
+          format: int32
+          description: |
+                Número de Línea de Crédito. Si la operación está relacionada a una línea de crédito hereda las garantías de la línea caso contario ata las garantías que se creen.
+          example: 600000345
+          nullable: false
+        guaranteeValidationCat:
+          type: string
+          description: |
+                No aplica.
+          nullable: true
+        guaranteeValidation:
+          type: string
+          description: |
+                Indica que las validaciones de condiciones se realizan contra la parametrizaion de FISA.
+                Por defecto 1.
+          example: 1
+          nullable: false
+        backToBack:
+          type: string
+          description: |
+                Indica si la pignoración es back to back. Valores 0 - no, 1 - si.
+          example: 0
+          nullable: false
+        operationId:
+          type: integer
+          format: int32
+          description: |
+                Número del préstamo a garantizar.
+          example: 6001934329
+          nullable: false
+    OtrTreqCusPrdRel:
+      type: object
+      description: |
+                Lista de Clientes relacionados al Préstamo.
+      properties:
+        customerSeq:
+          type: number
+          description: |
+              Código del cliente dueño de la garantía.
+              Registrado en la transacción 2/2.
+              Ítem catálogo catClient.
+          example: 767857
+          nullable: true
+        clientId:
+          type: number
+          description: |
+                Código del cliente FISA System.
+                Registrado en la transacción 2/2.
+                Ítem catálogo catClient.
+          example: 767857                
+          nullable: true          
+    OtrTypinsurance:
+      type: object
+      description: |
+                Información de los seguros.
+      properties:
+        segTipo:
+          type: string
+          description: |
+              Tipo de seguro
+          enum: [S, E] # Valores permitidos: S Colectivo, E Endosado          
+          example: S
+          nullable: false  
+        segCodval:
+          type: integer
+          format: int32
+          description: |
+                Tipo de seguro.
+          enum: [1, 2, 3] # Valores permitidos: 1 Vida, 2 Incendio, 3 Cesantía
+          example: 1
+          nullable: false
+        segSolicitud:
+          type: string
+          description: |
+                Número de solicitud.
+          example: 1
+          nullable: true  
+        segSolsec:
+          type: number
+          description: |
+                Secuencia general de la solicitud.
+          example: 1
+          nullable: true  
+        segSolseccli:
+          type: number
+          description: |
+                Secuencia de cliente en la solicitud.
+          example: 1
+          nullable: true  
+        segSolsecgar:
+          type: number
+          description: |
+                Secuencia de garantía en la solicitud.
+          example: 1
+          nullable: true  
+        segSolsecope:
+          type: number
+          description: |
+                Secuencia de operación en la solicitud.
+          example: 1
+          nullable: true  
+        segTipoid:
+          type: string
+          description: |
+                (Cliente) Tipo de identificación del cliente.
+                Ítem catálogo catTypeId.
+          example: C
+          nullable: true  
+        segIdentifica:
+          type: string
+          description: |
+                (Cliente) Identificación del cliente.
+          example: 104111111
+          nullable: true  
+        segClienteid:
+          type: integer
+          format: int32
+          description: |
+                (Cliente) Código cliente FISA System.
+                Registrado en la transacción 2/2.
+                Ítem catálogo catClient.
+          example: 84875                
+          nullable: true  
+        segNumgaran:
+          type: integer
+          format: int32
+          description: |
+                (Garantía) Número de garantía FISA System.
+          example: 1
+          nullable: true  
+        segTipgar:
+          type: integer
+          format: int32
+          description: |
+                (Garantía) Tipo de garantía. Ítem catálogo 33.
+          example: 2
+          nullable: true  
+        segTipbien:
+          type: integer
+          format: int32
+          description: |
+                (Garantía) Tipo de bien. Ítem catálogo 22.
+          example: 40
+          nullable: true  
+        segCredito:
+          type: integer
+          format: int32
+          description: |
+                (Operación) Número de préstamo al que aplica el seguro.
+          example: 6001934329
+          nullable: true  
+        segCobertura:
+          type: number
+          description: |
+                (Información general) Valor de la cobertura seguro.
+          example: 50000
+          nullable: true  
+        segMoneda:
+          type: integer
+          format: int32
+          description: |
+                (Información general) Moneda del valor de la cobertura seguro.
+                Ítem catálgo catCurrency
+          example: 0 
+          nullable: true  
+        segSecuencia:
+          type: integer
+          format: int32
+          description: |
+                (Seguro Colectivo) Secuencia del seguro.
+          example: 1
+          nullable: true  
+        segCategoria:
+          type: integer
+          format: int32
+          description: |
+                (Seguro Colectivo) Categoría del seguro.
+          example: 12
+          nullable: true  
+        segCertificado:
+          type: string
+          description: |
+                (Seguro Colectivo) Número de certificado de la póliza de seguro.
+          example: 233
+          nullable: true  
+        segDescripcion:
+          type: string
+          description: |
+                (Seguro Colectivo) Descripcion del seguro.
+          example: Seguro de Vida
+          nullable: true  
+        segTasaaseg:
+          type: number
+          description: |
+                (Seguro Colectivo) Tasa del seguro aplicada por la Aseguradora.
+          example: 5.000000
+          nullable: true  
+        segTasaban:
+          type: number
+          description: |
+                (Seguro Colectivo)  Tasa del seguro aplicada por la Institución Financiera.
+          example: 0.000000
+          nullable: true  
+        segImpuesto:
+          type: number
+          description: |
+                (Seguro Colectivo) Impuesto sobre la prima del seguro.
+          example: 
+          nullable: true  
+        segPctcobertura:
+          type: number
+          description: |
+                (Seguro Colectivo) Porcentaje de cobertura.
+          minimum: 0
+          maximum: 100
+          nullable: true  
+        segPctrecargo:
+          type: number
+          description: |
+                (Seguro Colectivo) Porcentaje de recargo.
+          example: 100
+          minimum: 0
+          maximum: 100
+          nullable: true  
+        segPctpart:
+          type: number
+          description: |
+                (Seguro Colectivo)  Porcentaje de participación.
+          example: 
+          minimum: 0
+          maximum: 100
+          nullable: true  
+        segPrimamensual:
+          type: number
+          description: |
+                (Seguro Colectivo) Prima mensual .
+          example: 678
+          nullable: true  
+        segPrimaanual:
+          type: number
+          description: |
+                (Seguro Colectivo) Prima anual.
+          example: 8136
+          nullable: true  
+        segPrimadesemb:
+          type: number
+          description: |
+                (Seguro Colectivo) Prima del desembolso.
+          example: null
+          nullable: true  
+        segPrimacuota:
+          type: number
+          description: |
+                (Seguro Colectivo) Prima de la cuota (prima periodo).
+          example: 678
+          nullable: true  
+        segTasacuota:
+          type: number
+          description: |
+                (Seguro Colectivo) Valor de la prima a cobrarse en las cuotas o en la liquidación.
+          example: 5.34
+          nullable: true  
+        segCliedad:
+          type: number
+          description: |
+                (Seguro Colectivo) Edad del cliente (vida/cesantía).
+          example: 38
+          nullable: true  
+        segClitipo:
+          type: integer
+          format: int32
+          description: |
+                (Seguro Colectivo) Tipo de persona, ítem catálogo 57.
+          example: 1
+          nullable: true  
+        segAuxcobertura1:
+          type: number
+          description: |
+                (Seguro Colectivo) Opción de cobertura1, Monto Préstamo/Bien, solo incendio.
+          example: 115127
+          nullable: true  
+        segAuxcobertura2:
+          type: number
+          description: |
+                (Seguro Colectivo) Opción de cobertura, solo consutrucción, solo incendio.
+          example: 
+          nullable: true  
+        segAuxmoneda:
+          type: integer
+          format: int32
+          description: |
+                (Seguro Colectivo)  Moneda de la cobertura, en el caso de garantías puede estar en otra moneda.Si viene en null se presume la moneda del préstamo(seguro) que aplicaría para vida y cesantía.
+                Ítem catálgo catCurrency.
+          example: 0
+          nullable: true  
+        segCodasegu:
+          type: integer
+          format: int32
+          description: |
+                (Seguro Endosado) Código de aseguradora.
+                ítem catálogo 7.
+          example: 10
+          nullable: true  
+        segPoliza:
+          type: string
+          description: |
+                (Seguro Endosado)  Código de póliza.
+          example: 4554
+          nullable: true  
+        segEmipol:
+          type: string
+          format: date # Este es el formato estándar para fechas. Formato yyyy/mm/dd.
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Seguro Endosado)  Fecha de emisión de poliza.
+          example: "2021/04/04"
+          nullable: true  
+        segVencepol:
+          type: string
+          format: date # Este es el formato estándar para fechas. Formato yyyy/mm/dd.
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Seguro Endosado)  Fecha de vencimiento de la poliza.
+          example: "2025/04/04"
+          nullable: true  
+        segEndosodesde:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Seguro Endosado)  Endoso desde, solo incendio.
+          example: "2022/04/04"
+          nullable: true  
+        segEndosohasta:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Seguro Endosado)  Endoso hasta, solo incendio.
+          example: 
+          nullable: true  
+        segDesde:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Histórico) Fecha desde.
+          example: "2022/10/28"
+          nullable: true  
+        segHasta:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                (Histórico)  Fecha hasta.
+          example: 
+          nullable: true  
+    OtrWarnigs:
+      type: object
+      description: |
+        Detalle de los mensajes que se presetan durante la ejecución del servicio.
+      properties:
+        message:
+          type: string
+          description: Texto del mensaje.
+          nullable: true 
+    GuaranteeValLegalGuaranOut:
+      type: object
+      description: |
+        Resultado de Validar Datos de Legalización de la Garantía
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object            
+          properties:
+            prbGuarantee:
+              $ref: '#/components/schemas/OtrGuarantee'
+            ptbGuaranteeope:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeOperation'
+            ptbGuaranteeinfo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeInfo'
+            ptbGuaranteeleg:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeLegalize'
+            ptiInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptiReqcli:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTreqCusPrdRel'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            pnbResponse:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK.
+    GuaraUaranteeIn:
+      type: object
+      description: |
+        Validar Garantía.
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object    
+          properties:
+            pcbLanguageid: 
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            pnbBranchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false
+            pnbOfficeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            pnbDeptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            pcbTerminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false        
+            pniUser:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false       
+            pciDeferred:
+              type: string
+              description: |
+                Indica si se está trabajando en horario diferido o no.
+              enum: [N] # Valores permitidos: "S" para sí, "N" para no
+              example: "N"
+              nullable: false          
+            pdiProcessdate:
+              type: string
+              format: date # Este es el formato estándar para fechas
+              pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+              description: |
+                Fecha proceso.
+              example: "2024/05/20"
+              nullable: false          
+            pciAction:
+              type: string
+              description: Acción a ejecutar.
+              enum: ["2"] # Valores permitidos: "2" Validaciones (incluye cálculos)
+              example: 2
+              nullable: false          
+            prbGuarantee:
+              $ref: '#/components/schemas/OtrGuarantee'
+            ptbGuaranteeope:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeOperation'
+            ptbGuaranteeinfo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeInfo'
+            ptbGuaranteeleg:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeLegalize'
+            ptiInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptiReqcli:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTreqCusPrdRel'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+    GuaraUaranteeOut:
+      type: object
+      description: |
+        Resultado de Validar Garantía
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object            
+          properties:
+            prbGuarantee:
+              $ref: '#/components/schemas/OtrGuarantee'
+            ptbGuaranteeope:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeOperation'
+            ptbGuaranteeinfo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeInfo'
+            ptbGuaranteeleg:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeLegalize'
+            ptiInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptiReqcli:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTreqCusPrdRel'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            pnbResponse:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK.
+    GuarGuaranteeIn:
+      type: object
+      description: |
+        Crea Garantías y las relaciona con el Préstamo
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object      
+          required:
+            - ReqMessage
+            - Envelop
+          properties:
+            ReqMessage:
+              $ref: '#/components/schemas/ReqMessage'
+            Envelop:
+              type: object    
+              properties:
+                pcbLanguageid: 
+                  type: string
+                  description: |
+                    Código ISO del lenguaje del usuario.
+                  enum: [es]
+                  nullable: false
+                pnbBranchid:
+                  type: number
+                  description: |
+                    Código de la sucursal FISA System desde cual se ejecuta la acción.
+                    Registrada en la transacción 1/2.
+                    Ítem catálogo catBranch.
+                  example: 2
+                  nullable: false
+                pnbOfficeid:
+                  type: number
+                  description: |
+                    Código de la oficina FISA System desde cual se ejecuta la acción.
+                    Ítem catálogo catOffice.
+                    Relacionada con la sucursal indicada en "branchid". 
+                    Registrada en la transacción 1/2.
+                  example: 1
+                  nullable: false          
+                pnbDeptoid:
+                  type: number
+                  description: |
+                    Código del departamento FISA System desde cual se ejecuta la acción.
+                    Ítem catálogo 40.
+                    Registrado en la transacción 1/1.
+                  example: 6
+                  nullable: false          
+                pcbTerminalid:
+                  type: string
+                  description: |
+                    Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                    Ítem catálogo catTerminal.
+                    Registrado en la transacción 1/11.
+                  example: 10.242.9.501          
+                  nullable: false        
+                pniUser:
+                  type: string
+                  description: |
+                    Código usuario FISA System que ejecuta la acción.
+                    Registrado en la transacción 1/9.
+                    Ítem catálogo catUser.
+                  example: 157  
+                  nullable: false       
+                pciDeferred:
+                  type: string
+                  description: |
+                    Indica si se está trabajando en horario diferido o no.
+                  enum: [N] # Valores permitidos: "S" para sí, "N" para no
+                  example: "N"
+                  nullable: false          
+                pdiProcessdate:
+                  type: string
+                  format: date # Este es el formato estándar para fechas
+                  pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+                  description: |
+                    Fecha proceso.
+                  example: "2024/05/20"
+                  nullable: false    
+                pciAction:
+                  type: string
+                  description: Acción a ejecutar.
+                  enum: ["3"] # Valores permitidos: "3" Crea Garantías y ata las operaciones
+                  example: 3
+                  nullable: false 
+                prbGuarantee:
+                  $ref: '#/components/schemas/OtrGuarantee'
+                ptbGuaranteeope:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeOperation'
+                ptbGuaranteeinfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeInfo'
+                ptbGuaranteeleg:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeLegalize'
+                ptiInsurance:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrTypinsurance'
+                ptiReqcli:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrTreqCusPrdRel'
+                ptbWarnings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrWarnigs'
+    GuarGuaranteeOut:
+      type: object
+      description: |
+        Resultado de Crea Garantías y las relaciona con el Préstamo
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object            
+          properties:
+            prbGuarantee:
+              $ref: '#/components/schemas/OtrGuarantee'
+            ptbGuaranteeope:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeOperation'
+            ptbGuaranteeinfo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeInfo'
+            ptbGuaranteeleg:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeLegalize'
+            ptiInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptiReqcli:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTreqCusPrdRel'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            pnbResponse:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK.
+    GuaranteeLegalAccountingIn:
+      type: object
+      description: Legalizar y contabilizar Garantía
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object      
+          required:
+            - ReqMessage
+            - Envelop
+          properties:
+            ReqMessage:
+              $ref: '#/components/schemas/ReqMessage'
+            Envelop:
+              type: object    
+              properties:
+                pcbLanguageid: 
+                  type: string
+                  description: |
+                    Código ISO del lenguaje del usuario.
+                  enum: [es]
+                  nullable: false
+                pnbBranchid:
+                  type: number
+                  description: |
+                    Código de la sucursal FISA System desde cual se ejecuta la acción.
+                    Registrada en la transacción 1/2.
+                    Ítem catálogo catBranch.
+                  example: 2
+                  nullable: false
+                pnbOfficeid:
+                  type: number
+                  description: |
+                    Código de la oficina FISA System desde cual se ejecuta la acción.
+                    Ítem catálogo catOffice.
+                    Relacionada con la sucursal indicada en "branchid". 
+                    Registrada en la transacción 1/2.
+                  example: 1
+                  nullable: false          
+                pnbDeptoid:
+                  type: number
+                  description: |
+                    Código del departamento FISA System desde cual se ejecuta la acción.
+                    Ítem catálogo 40.
+                    Registrado en la transacción 1/1.
+                  example: 6
+                  nullable: false          
+                pcbTerminalid:
+                  type: string
+                  description: |
+                    Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                    Ítem catálogo catTerminal.
+                    Registrado en la transacción 1/11.
+                  example: 10.242.9.501          
+                  nullable: false        
+                pniUser:
+                  type: string
+                  description: |
+                    Código usuario FISA System que ejecuta la acción.
+                    Registrado en la transacción 1/9.
+                    Ítem catálogo catUser.
+                  example: 157  
+                  nullable: false       
+                pciDeferred:
+                  type: string
+                  description: |
+                    Indica si se está trabajando en horario diferido o no.
+                  enum: [N] # Valores permitidos: "S" para sí, "N" para no
+                  example: "N"
+                  nullable: false          
+                pdiProcessdate:
+                  type: string
+                  format: date # Este es el formato estándar para fechas
+                  pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+                  description: |
+                    Fecha proceso.
+                  example: "2024/05/20"
+                  nullable: false           
+                pciAction:
+                  type: string
+                  description: Acción a ejecutar.
+                  enum: ["5"] # Valores permitidos: "5" Legalización y contabilización
+                  example: 5
+                  nullable: false 
+                prbGuarantee:
+                  $ref: '#/components/schemas/OtrGuarantee'
+                ptbGuaranteeope:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeOperation'
+                ptbGuaranteeinfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeInfo'
+                ptbGuaranteeleg:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeLegalize'
+                ptiInsurance:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrTypinsurance'
+                ptiReqcli:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrTreqCusPrdRel'
+                ptbWarnings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrWarnigs'
+    GuaranteeLegalAccountingOut:
+      type: object
+      description: |
+        Resultado de Legalizar y contabilizar Garantía
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object            
+          properties:
+            prbGuarantee:
+              $ref: '#/components/schemas/OtrGuarantee'
+            ptbGuaranteeope:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeOperation'
+            ptbGuaranteeinfo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeInfo'
+            ptbGuaranteeleg:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeLegalize'
+            ptiInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptiReqcli:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTreqCusPrdRel'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            pnbResponse:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK.
+    GuaranteeGetParamIn:
+      type: object
+      description: |
+        Cargar Parametrización de Garantías FISA System
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object      
+          required:
+            - ReqMessage
+            - Envelop
+          properties:
+            ReqMessage:
+              $ref: '#/components/schemas/ReqMessage'
+            Envelop:
+              type: object    
+              properties:
+                pcbLanguageid: 
+                  type: string
+                  description: |
+                    Código ISO del lenguaje del usuario.
+                  enum: [es]
+                  nullable: false
+                pnbBranchid:
+                  type: number
+                  description: |
+                    Código de la sucursal FISA System desde cual se ejecuta la acción.
+                    Registrada en la transacción 1/2.
+                    Ítem catálogo catBranch.
+                  example: 2
+                  nullable: false
+                pnbOfficeid:
+                  type: number
+                  description: |
+                    Código de la oficina FISA System desde cual se ejecuta la acción.
+                    Ítem catálogo catOffice.
+                    Relacionada con la sucursal indicada en "branchid". 
+                    Registrada en la transacción 1/2.
+                  example: 1
+                  nullable: false          
+                pnbDeptoid:
+                  type: number
+                  description: |
+                    Código del departamento FISA System desde cual se ejecuta la acción.
+                    Ítem catálogo 40.
+                    Registrado en la transacción 1/1.
+                  example: 6
+                  nullable: false          
+                pcbTerminalid:
+                  type: string
+                  description: |
+                    Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                    Ítem catálogo catTerminal.
+                    Registrado en la transacción 1/11.
+                  example: 10.242.9.501          
+                  nullable: false        
+                pniUser:
+                  type: string
+                  description: |
+                    Código usuario FISA System que ejecuta la acción.
+                    Registrado en la transacción 1/9.
+                    Ítem catálogo catUser.
+                  example: 157  
+                  nullable: false       
+                pciDeferred:
+                  type: string
+                  description: |
+                    Indica si se está trabajando en horario diferido o no.
+                  enum: [N] # Valores permitidos: "S" para sí, "N" para no
+                  example: "N"
+                  nullable: false          
+                pdiProcessdate:
+                  type: string
+                  format: date # Este es el formato estándar para fechas
+                  pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+                  description: |
+                    Fecha proceso.
+                  example: "2024/05/20"
+                  nullable: false           
+                pciAction:
+                  type: string
+                  description: Acción a ejecutar.
+                  enum: ["1"] # Valores permitidos: "1" Carga Parametrizacion Fisa System
+                  nullable: false 
+                prbGuarantee:
+                  $ref: '#/components/schemas/OtrGuarantee'
+                ptbGuaranteeope:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeOperation'
+                ptbGuaranteeinfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeInfo'
+                ptbGuaranteeleg:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrGuaranteeLegalize'
+                ptiInsurance:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrTypinsurance'
+                ptiReqcli:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrTreqCusPrdRel'
+                ptbWarnings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OtrWarnigs'
+    GuaranteeGetParamOut:
+      type: object
+      description: |
+        Resultado de Cargar Parametrización de Garantías FISA System
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object            
+          properties:
+            prbGuarantee:
+              $ref: '#/components/schemas/OtrGuarantee'
+            ptbGuaranteeope:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeOperation'
+            ptbGuaranteeinfo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeInfo'
+            ptbGuaranteeleg:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrGuaranteeLegalize'
+            ptiInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptiReqcli:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTreqCusPrdRel'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            pnbResponse:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK.
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    X-ConversationId:
+      description: |
+        Identificador único de la conversación del servicio.
+
+        Por cada servicio que interviene en la orquestación se tiene un id de conversación.
+
+      example: "59491c7e-ad88-49ec-a2ad-99ddcb1f5674"
+
+      type: string
+      format: uuid
+
+    X-ChannelId:
+      description: |
+        Id del canal desde el cual se se está invocando el servicio. 
+        Ítem de catálogo 139.
+
+        Ej. de osibles Valores:
+           "2"    BOTON PAGO
+           "3"    CAJA EXPRESS
+           "5"    CAJA EXTERNA
+      type: string
+      maxLength: 50
+      example: "2"
+      
+    X-CarDealerId:
+      description: |
+        Código del concesionario (Sucursal FISA System) desde donde se está generando el proceso de originación
+
+        Representa el código único asignado a la compañia con la cual se trabajar
+      example: 3
+      type: string
+      minLength: 0
+      maxLength: 20
+
+    X-UserId:
+      description: |
+        Código del usuario FISA System que está realizando el proceso
+        Registrado en la transacción 1/9.
+        Ítem catálogo catUser.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-SellerId:
+      description: |
+        Código del vendedor desde donde se está generando el proceso de originación
+        No definido en FISA System.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-BranchId:
+      description: |
+        Código de la sucursal FISA System desde cual se ejecuta la acción.
+        Registrada en la transacción 1/2.
+        Ítem catálogo catBranch.
+      example: 2
+      type: integer
+      format: int64
+
+    X-OfficeId:
+      description: |
+        Código de la oficina FISA System desde cual se ejecuta la acción.
+        Ítem catálogo catOffice.
+        Relacionada con la sucursal indicada en "branchid". 
+        Registrada en la transacción 1/2.
+      example: 1
+      type: integer
+      format: int64
+      
+    X-EnterpriseCode:
+      description: |
+        Código del Empresa o institución que invoca el servicio
+        No definido en FISA System.
+
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: MAF
+      
+    X-SysCode:
+      description: |
+        Código del Sistema que invoca el servicio.
+        No definido en FISA System.
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: SISCRED
+      
+    ######## FIN INFORMACION INYECCION SOLICITUD ORIGINACION
+
+    Info:
+      description: |
+        Información de cabecera requerida en los servicios como parte del mensaje
+      type: object
+      properties:
+        Consumer:
+          description: |
+            Información del consumidor del servicio
+          type: object
+          properties:
+            sysCode:
+              $ref: "#/components/schemas/X-SysCode"
+            enterpriseCode:
+              $ref: '#/components/schemas/X-EnterpriseCode'
+        Trace:
+          description: |
+            Información para seguimiento del servicio
+          type: object
+          required:
+            - userId
+            - carDealerId
+            - branchId
+            - officeId
+          properties:
+            conversationId:
+              $ref: '#/components/schemas/X-ConversationId'
+            userId:
+              $ref: '#/components/schemas/X-UserId'
+            carDealerId:
+              $ref: '#/components/schemas/X-CarDealerId'
+            sellerId:
+              $ref: '#/components/schemas/X-SellerId'
+            branchId:
+              $ref: '#/components/schemas/X-BranchId'
+            officeId:
+              $ref: '#/components/schemas/X-OfficeId'
+            channelId:
+              $ref: '#/components/schemas/X-ChannelId'
+
+    Result:
+      description: |
+        Resultado de la invocación al servicio
+      type: object
+      required:
+        - status
+        - description
+      properties:
+        status:
+          description: |
+            Estado de la ejecución del servicio
+
+            Los posible valores que puede tener este campo son:
+            - SUCCESS
+            - ERROR
+          type: string
+          enum:
+            - SUCESSS
+            - ERROR
+        description:
+          description: |
+            Descripción del resultado de la invocación al servicio.
+            Puede ser algún texto indicando el resultado
+          type: string
+
+        SourceError:
+          description: |
+            Información en caso de error presentado en el servicio invocado
+          type: object
+          properties:
+            code:
+              description: Código de error devuelto
+              type: string
+            description:
+              description: |
+                Descripción del error devuelto por el servicio invocado
+              type: string
+              
+    ReqHeader:
+      description: |
+        Cabecera para la invocación del servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+
+    RspHeader:
+      description: |
+        Cabecera de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+        Result:
+
+          $ref: '#/components/schemas/Result'
+          
+    ReqMessage:
+      description: |
+        Mensaje para invocación de servicios
+      type: object
+      properties:
+        ReqHeader:
+          $ref: '#/components/schemas/ReqHeader'
+
+    RspMessage:
+      description: |
+        Mensaje de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        RspHeader:
+          $ref: '#/components/schemas/RspHeader'
+
+
+        
+
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
+
+    errorTitle:
+      description: |
+        Descripcion corta leible por humanos del tipo de error. Puede estar en lenguaje local.
+      type: string
+      minLength: 0
+      maxLength: 70
+
+    errorDetail:
+      description: |
+        Texto detallado específico leible por humanos de esta instancia de error.
+
+        Además XPath puede se usado para apuntar a la novedad que está generando el error
+
+      type: string
+      minLength: 0
+      maxLength: 500
+
+    MessageCode400:
+      description: Códigos de mensajes definidos para código de error HTTP 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - FORMAT_ERROR              #gen
+        - PARAMETER_NOT_CONSISTENT  #gen
+        - PARAMETER_NOT_SUPPORTED   #gen
+        - SERVICE_INVALID           #gen
+        - RESOURCE_UNKNOWN          #gen
+        - RESOURCE_EXPIRED          #gen
+        - RESOURCE_BLOCKED          #gen
+        - TIMESTAMP_INVALID         #gen
+        - PERIOD_INVALID            #gen
+        - SCA_METHOD_UNKNOWN        #gen
+        - SCA_INVALID               #gen
+        - CONSENT_UNKNOWN           #gen
+        
+    Error400:
+      description: |
+        Definición estandarizada para reportar información de errores acorde a [RFC7807] en caso de códigos HTTP 400.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            Una referencia URI [RFC3986] que identifica el tipo de problema.
+          type: string
+          format: uri
+          minLength: 0
+          maxLength: 70
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        code:
+          $ref: "#/components/schemas/MessageCode400"
+        additionalErrors:
+          description: |
+            Lista de bloques de información de Error.
+
+            Puede ser usado si mas de un error va a ser comunicado
+          type: array
+          items: #ErrorInformation
+            description: Este es el elemento de datos para soportar la declaración de errores adicionales en el contexto de [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/errorTitle"
+              detail:
+                $ref: "#/components/schemas/errorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400"
+                
+  responses:
+    #################################
+    # Respuestas Afirmativas
+    #################################
+
+    OK_200_ValLegalGuaran:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GuaranteeValLegalGuaranOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/valLegalGuaranExample"        
+          
+
+    OK_200_ValGuarantee:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GuaraUaranteeOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/valGuaranteeExample"            
+
+    OK_200_PostGuarantee:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GuarGuaranteeOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/postGuaranteeExample"            
+
+
+    OK_200_LegalAccounting:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GuaranteeLegalAccountingOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/legalAccountingExample"     
+              
+
+    OK_200_GetParam:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GuaranteeGetParamOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/getParamExample"                 
+    
+    
+    #################################
+    # Respuestas negativas
+    #################################
+
+    BAD_REQUEST_400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400"
+
+    UNAUTHORIZED_401:
+      description: Error de autenticación
+
+    FORBIDDEN_403:
+      description: Forbidden
+
+    INTERNAL_SERVER_ERROR_500:
+      description: Internal Server Error            
+
+
+  examples:
+    valLegalGuaranExample:
+      summary: Valida Datos de Legalización de la Garantía
+      description: Valida Datos de Legalización de la Garantía
+      value: {}
+    valGuaranteeExample:
+      summary: Valida Garantía
+      description: Valida Garantía
+      value: {}
+    postGuaranteeExample:
+      summary: Crea Garantías y las relacona con el Préstamo
+      description: Crea Garantías y las relacona con el Préstamo
+      value: {}
+    legalAccountingExample:
+      summary: Legaliza y contabiliza Garantía
+      description: Legaliza y contabiliza Garantía
+      value: {}
+    getParamExample:
+      summary: Carga parametrización de Garantías
+      description: Carga parametrización de Garantías
+      value: {}      

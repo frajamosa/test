@@ -1,0 +1,1333 @@
+openapi: 3.0.1
+info:
+  title: API - Información Producto Financiero
+  description: ''
+  version: 1.0.0-SNAPSHOT
+servers:
+  - url: http://localhost:9083
+    description: Generated server url
+paths:
+  /product/getProduct/request/{moduleId}/{productId}/{typeProdId}/{ccyId}:
+    post:
+      tags:
+        - product-rest-controller
+      summary: Obtener información de producto financiero
+      operationId: getProduct
+
+      parameters:
+        - $ref: "#/components/parameters/moduleId"
+        - $ref: "#/components/parameters/productId"
+        - $ref: "#/components/parameters/typeProdId"
+        - $ref: "#/components/parameters/ccyId"
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProProductIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_ProProduct'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                        
+                    
+components:
+  headers:
+    #####################################################
+    # Reusable Response Header Elements
+    #####################################################
+
+    tokenmcm:
+      schema:
+        type: string
+
+    Location:
+      description: |
+        Localización del recurso creado.
+      schema:
+        type: string
+        format: url
+      required: false
+
+  parameters:
+    #####################################################
+    # Predefined Parameters
+    #####################################################
+    moduleId:
+      name: moduleId
+      in: path
+      description: |
+        Código módulo FISA System.
+        Ítem catálogo catModule.
+        * 6
+      required: true
+      schema:
+          type: number
+          
+    productId:
+      name: productId
+      in: path
+      description: |
+        Código producto FISA System.
+        Ítem catálogo catProduto.
+        * 5
+      required: true
+      schema:
+          type: number
+
+    typeProdId:
+      name: typeProdId
+      in: path
+      description: |
+        Código tipo de producto FISA System.
+        Ítem catálogo catTypeProduct.
+        * 1
+      required: true
+      schema:
+          type: number
+          
+    ccyId:
+      name: ccyId
+      in: path
+      description: |
+        Código moneda FISA System.
+        Ítem catálogo catCurrency.
+        * 0
+      required: true
+      schema:
+          type: number
+          
+          
+  schemas:
+    ProProductIn:
+      type: object
+      description: |
+        Información del producto financiero
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object        
+          properties:      
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+    OtrActiveratebypro:
+      type: object
+      description: |
+                Información de tasas del producto financiero.
+      properties:
+        effectivedate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                Fecha desde de vigencia del registro (histórico).
+          example: "2022/10/28"
+          nullable: true
+        mod:
+          type: integer
+          format: int32
+          description: |
+                Código módulo del FISA System.
+                Ítem del catálogo catModule.
+          example: 6
+          nullable: true
+        pro:
+          type: integer
+          format: int32
+          description: |
+                Código producto del módulo FISA System.  
+                Ítem del catálogo catProduct.
+          example: 5
+          nullable: true
+        type:
+          type: integer
+          format: int32
+          description: |
+                Código tipo de producto FISA System.
+                Ítem del catálogo catTypeProduct.
+          example: 1
+          nullable: true
+        ccy:
+          type: integer
+          format: int32
+          description: |
+                Código moneda del producto FISA System. 
+                Ítem del catálogo catCurrency.
+          example: 0
+          nullable: true
+        codcredit:
+          type: integer
+          format: int32
+          description: |
+                Código producto del módulo FISA System.  
+          example: 523
+          nullable: true
+        credittype:
+          type: integer
+          format: int32
+          description: |
+                Tipo de crédito. Préstamo 281.
+          example: 1
+          nullable: true
+        ratetypecat:
+          type: integer
+          format: int32
+          description: |
+                Catálogo tipo de tasa, por defecto 67.
+          enum: [67]
+          nullable: true
+        ratetype:
+          type: integer
+          format: int32
+          description: |
+                Código tipo de tasa, ítem del catálogo 67.
+          example: 1
+          nullable: true
+        minamount: 
+          type: number
+          description: |
+                Rango - Monto desde. 
+          example: 0
+          nullable: true
+        maxamount:
+          type: number
+          description: |
+                Rango - Monto hasta.
+          example: 999999999999
+          nullable: true
+        typeintcalccat:
+          type: integer
+          format: int32
+          description: |
+                Catálogo cálculo de interés, por defecto 64.
+          enum: [64] 
+          nullable: true
+        typeintcalc:
+          type: integer
+          format: int32
+          description: |
+                Código cálculo de interés, ítem del catálogo 64.
+          example: 2
+          nullable: true
+        margin:
+          type: number
+          description: |
+                Margen de interés a añadir a la tasa.
+          example: 0.000000
+          nullable: true
+        overdraftcommissrate:
+          type: number
+          description: |
+                Comisión por tasa. 
+          example: 0.000000
+          nullable: true
+        formulacatalog:
+          type: integer
+          format: int32
+          description: |
+                Catálogo fórmula de cálculo del interés.
+                Por defecto 83.
+          enum: [83] 
+          nullable: true
+        formula:
+          type: integer
+          format: int32
+          description: |
+                Fórmula de cálculo del interés
+          example: 4
+          nullable: true
+        daysinyear:
+          type: integer
+          format: int32
+          description: |
+                Días base mes, de la base de cálculo de interés.
+          example: 360
+          nullable: true
+        daybasis:
+          type: integer
+          format: int32
+          description: |
+                Días base de la base de cálculo de interés.                 
+          example: 365
+          nullable: true
+        dateto:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                Fecha hasta de vigencia del registro (histórico).
+                En nulo, registro vigente.
+          example: 
+          nullable: true
+        sourcefundscatalog:
+          type: integer
+          format: int32
+          description: |
+                Catálogo origen de fondos.
+                Por defecto 69.
+          enum: [69] 
+          nullable: true
+        sourcefunds:
+          type: integer
+          format: int32
+          description: |
+                Origen de fondos.
+          example: 1
+          nullable: true
+        initialterm:
+          type: integer
+          format: int32
+          description: |
+                Rango - plazo desde en días.
+          example: 1
+          nullable: true
+        finalterm:
+          type: integer
+          format: int32
+          description: |
+                Rango - plazo hasta, en días calendario.
+          example: 999999
+          nullable: true
+    OtrChargesbypro:
+      type: object
+      description: |
+                Detalle de gastos (cargos, comisiones, impuestos) del producto a cobrarse en distintas etapas del préstamo.
+      properties:
+        idmodule:
+          type: integer
+          format: int32
+          description: |
+                Código módulo FISA System.
+                Ítem del catálogo catModule.
+          example: 6                
+          nullable: true
+        idproduct:
+          type: integer
+          format: int32
+          description: |
+                Código producto del módulo de FISA System.
+                Ítem del catálogo catProduct.
+          example: 5                
+          nullable: true
+        idtype:
+          type: integer
+          format: int32
+          description: |
+                Código tipo de producto del prodcuto de FISA System.
+                Ítem del catálogo catTypeProduct.
+          example: 1                
+          nullable: true
+        idccy:
+          type: integer
+          format: int32
+          description: |
+                Código moneda del producto.
+                Ítem del catálogo catCurrency.
+          example: 0                
+          nullable: true
+        codetablewhen:
+          type: integer
+          format: int32
+          description: |
+                Catálogo Cuando Aplica (Ejemplo a la Liquidación o la Cuota) cobro del gasto. Por defecto 86.
+          enum: [86]
+          nullable: true
+        codewhen:
+          type: integer
+          format: int32
+          description: |
+                Código Cuando Aplica (Ejemplo a la Liquidación o la Cuota) cobro del gasto. 
+                Ítem catálogo 86.
+          example: 1
+          nullable: true
+        modtrncalc:
+          type: integer
+          format: int32
+          description: |
+                Código módulo tansacción FISA System, sobre la cual aplica cobro de gasto.
+                Ítem del catálogo catModule.
+          example: 6 
+          nullable: true
+        trncalc:
+          type: integer
+          format: int32
+          description: |
+                Código tansacción FISA System, sobre la cual aplica cobro de gasto.
+          example: 0
+          nullable: true
+        codecharge:
+          type: integer
+          format: int32
+          description: |
+                Código del gasto a cobrar.
+                Ítem catálogo catChargeParam.
+          example: 9
+          nullable: true
+        codetableappli:
+          type: integer
+          format: int32
+          description: |
+                Catálogo Aplicación de Valores. 
+                Por defecto 89.
+          enum: [89]
+          nullable: true
+        codeappli:
+          type: integer
+          format: int32
+          description: |
+                Concepto sobre el cual se aplica el gasto o sobre el cual se calcula el gasto. Ejemplo (Capital Reducido). 
+          example: 1
+          nullable: true
+        codeevaluate:
+          type: integer
+          format: int32
+          description: |
+                Sobre que evaluar. Código de otro gasto sobre cual aplica el cobro de otro.
+                Ítem catálogo catChargeParam.
+                Aplica por ejemplo para el cobro de un impuesto sobre el valor de una comisión.
+          example: 
+          nullable: true
+        codeperiod:
+          type: integer
+          format: int32
+          description: |
+                Período, de cobro del gasto.
+          example: 
+          nullable: true
+        severalmov:
+          type: string
+          description: |
+                Varios movimientos.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no    
+          example: 
+          nullable: true
+        esfeci:
+          type: string
+          description: |
+                No aplica.
+          nullable: true
+        cobra:
+          type: string
+          description: |
+                Quien paga. 
+          enum: [C, B] # Valores permitidos: "C" para cliente, "B" para banco  
+          example: 
+          nullable: true
+        aplicames:
+          type: string
+          description: |
+                Indica si el cáclulo del gasto es mensual. 
+                Por ejemplo cuando el cálculo es por tasa o porcentaje se puede indicar que es un cálculo mensual.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: 
+          nullable: true
+        datefrom:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                Fecha desde la cual se cobro el gasto.
+          example: "2022/10/28"
+          nullable: true
+        operador:
+          type: integer
+          format: int32
+          description: |
+                Código usuario FISA System que registró la parametrización del gasto.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+          example: 157                  
+          nullable: true
+        systemdate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                Fecha real en la que se registró la parametrización del gasto.
+          example: "2022/10/28"
+          nullable: true
+    OtrLevelinformation:
+      type: object
+      properties:
+        idsalesproduct:
+          type: integer
+          format: int32
+          description: |
+                Código único del producto FISA System.
+          example: 523
+          nullable: true
+        typeperson:
+          type: integer
+          format: int32
+          description: |
+                Tipo de persona a la cual aplica el producto. 
+                Ítem del catálogo 57.
+          example: 1
+          nullable: true
+        securitylevel:
+          type: integer
+          format: int32
+          description: |
+                Nivel de seguridad del Usuario requerido por FISA Systema para el producto y tipo de persona.
+          minimum: 0
+          maximum: 14
+          example: 14
+          nullable: true
+        levelinforequired:
+          type: integer
+          format: int32
+          description: |
+                Nivel de información requerido por FISA Systema para el producto y tipo de persona.
+          minimum: 0
+          maximum: 14
+          example: 14
+          nullable: true
+        spouseinforequired:
+          type: string
+          description: |
+                Nivel de información del cónyuge requerido por FISA Systema para el producto y tipo de persona.
+          minimum: 0
+          maximum: 14
+          example: 4
+          nullable: true
+        levelspouseinforequired:
+          type: string
+          format: int32
+          description: |
+                Marca que indica si es requierida o no información del cónyuge del cliente principal de la operación.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no       
+          example: N
+          nullable: true
+    OtrProduct:
+      type: object
+      properties:
+        idsalesproduct:
+          type: integer
+          format: int32
+          description: |
+                Código único del producto FISA System.
+          example: 523
+          nullable: false
+        idmodule:
+          type: integer
+          format: int32
+          description: |
+                Código módulo FISA System.
+                Ítem del catálogo catModule.
+          example: 6
+          nullable: true
+        idproduct:
+          type: integer
+          format: int32
+          description: |
+                Código producto del módulo de FISA System.
+                Ítem del catálogo catProduct.
+          example: 5
+          nullable: true
+        idtype:
+          type: integer
+          format: int32
+          description: |
+                Código tipo de producto del prodcuto de FISA System.
+                Ítem del catálogo catTypeProduct.
+          example: 1
+          nullable: true
+        idccy:
+          type: integer
+          format: int32
+          description: |
+                Código moneda del producto.
+                Ítem del catálogo catCurrency
+          example: 0
+          nullable: true
+        name:
+          type: string
+          description: |
+                Nombre o descripción del producto.
+          example: "523 CREDITO VEHICULAR TOYOTA MIGRACION"
+          nullable: true
+        entitycat:
+          type: integer
+          format: int32
+          description: |
+                Código Catálogo de Compañia a la cual aplica el producto. Por defecto 82.
+          enum: [82]
+          nullable: true
+        orderprod:
+          type: integer
+          format: int32
+          description: |
+                Número de orden del producto en el catálogo de productos.
+          example: 204
+          nullable: true
+        entity:
+          type: integer
+          format: int32
+          description: |
+                Compañia a la cual aplica el producto. Ítem del catálgo 82.
+          example: 
+          nullable: true
+        appliestosales:
+          type: string
+          description: |
+                Marca que indica si el producto aplica a Plataforma de Ventas.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "S"
+          nullable: true
+    OtrProductloanparam:
+      type: object
+      description: |
+                Parámetros Módulo de Colocaciones.
+      properties:
+        confidentialfile:
+          type: string
+          description: |
+                No aplica. Aprobación verififica documentos entregados por el cliente.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: N
+          nullable: true
+        back:
+          type: string
+          description: |
+                No aplica. Indica si el producto aplica Pignoración Back to Batck.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: N
+          nullable: true
+        applycharges:
+          type: string
+          description: |
+                Marca que indica si el producto aplica cobro de Cargos.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no     
+          example: S
+          nullable: true
+        applycommission:
+          type: string
+          description: |
+                Marca que indica si el producto aplica cobro de Comisiones.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no     
+          example: S
+          nullable: true
+        applytax:
+          type: string
+          description: |
+                Marca que indica si el producto aplica cobro de Impuestos.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no     
+          example: S
+          nullable: true
+        applyadinterest:
+          type: string
+          description: |
+                Marca que indica si el producto aplica cobro de Interés Adicional.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no     
+          example: N
+          nullable: true
+        applyinsurances:
+          type: string
+          description: |
+                Marca que indica si el producto aplica cobro de Seguros.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no     
+          example: S
+          nullable: true
+        iscommitment:
+          type: string
+          description: |
+                Marca que indica si es un producto de Línea de Crédito o Compromiso
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no     
+          example: N
+          nullable: true
+        datefrom:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                Fecha de vigencia de la parametrización del Producto de Colocaciones.
+          example: "2022/10/28"
+          nullable: true
+        gracedays:
+          type: integer
+          format: int32
+          description: |
+                Días de gracia. 
+          minimum: 1
+          example: 
+          nullable: true
+        daystononaccrual:
+          type: integer
+          format: int32
+          description: |
+                Número de día atraso para el paso de cartera a Non-accrual.
+          example: 366
+          nullable: true
+        daysexpirationuntil:
+          type: integer
+          format: int32
+          description: |
+                Día tope en el mes para vencimiento cuota. Valor mayor o igual a daysexpirationfrom.
+          minimum: 1
+          maximum: 31
+          example: 1
+          nullable: true
+        daysexpirationfrom:
+          type: integer
+          format: int32
+          description: |
+                Día inicial en el mes para vencimiento cuota. Valor menor o igual a daysexpirationfrom.
+          minimum: 1
+          maximum: 31
+          example: 31
+          nullable: true
+        maxloanage:
+          type: integer
+          format: int32
+          description: |
+                Edad máxima para el préstamo.
+          example: 90
+          nullable: true
+        minloanage:
+          type: integer
+          format: int32
+          description: |
+                Edad mínima para el préstamo.
+          example: 18
+          nullable: true
+        isreprogramproduct:
+          type: string
+          description: |
+                Marca que indica si es un producto reprogramado.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: N
+          nullable: true
+        reviewdate:
+          type: integer
+          format: int32
+          description: |
+                Código de ciclo para revisión. 
+                Ítem catálogo carCycle.
+          example: 7
+          nullable: true
+        effectivedate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description:  |
+                Fecha de vigencia de los parámetros del producto de préstamos.
+          example: "2022/10/28"
+          nullable: true
+        sameexpiration:
+          type: string
+          description: |
+                COMPROMISOS -  Indica si los desembolsos heredan la fecha de vencimiento del compromiso
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: 
+          nullable: true
+        interimcommitment:
+          type: string
+          description: |
+                COMPROMISOS - El producto es compromiso interino.
+          example: 
+          nullable: true
+        idmodule:
+          type: integer
+          format: int32
+          description: |
+                Módulo al que pertenece el producto.
+          enum: [6]
+          nullable: true
+        currency:
+          type: integer
+          format: int32
+          description: |
+                Código moneda del producto FISA System. 
+                Ítem del catálogo catCurrency.
+          example: 0
+          nullable: true
+        monthsnotpay:
+          type: string
+          description: |
+                Marca que indica si en el producto se puede seleccionar meses que no pagan. 
+                Ejemplo no paga diciembre, es decir en el plan de pagos no se tendrá vencimientos de cuota en diciembre.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: S
+          nullable: true
+        renewalpercentage:
+          type: number
+          description: |
+                Porcentaje que debe pagar el cliente sobre el capital reducido, del préstamo anterior cuando renova.
+          minimum: 0
+          maximum: 100
+          nullable: true
+        graceperiods:
+          type: string
+          description: |
+                Marca que indica si el producto acepta períodos de gracia.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: N
+          nullable: true
+        pledged:
+          type: string
+          description: |
+                Indica si se pignora o no en el producto.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: N
+          nullable: true
+        percentagepledged:
+          type: number
+          description: |
+                Porcentaje sobre el valor del préstamo que se debe pignorar
+          minimum: 0
+          maximum: 100
+          example: 
+          nullable: true
+        idproduct:
+          type: integer
+          format: int32
+          description: |
+                Código producto del módulo de FISA System.
+                Ítem del catálogo catProduct.
+          example: 5
+          nullable: true
+        promoter:
+          type: string
+          description: |
+                COMPROMISOS - Indica si tiene promotor
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: 
+          nullable: true
+        rotary:
+          type: string
+          description: |
+                COMPROMISOS - Indica si el compromiso es rotativo o no.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: 
+          nullable: true
+        idtype:
+          type: integer
+          format: int32
+          description: |
+                Código tipo de producto del prodcuto de FISA System.
+                Ítem del catálogo catTypeProduct.
+          example: 1
+          nullable: true
+    OtrSourcefundsbypro:
+      type: object
+      properties:
+        idmodule:
+          type: integer
+          format: int32
+          description: |
+                Módulo al que pertenece el producto.
+                Ítem del catálogo catModule.
+          example: 6
+          nullable: true
+        idproduct:
+          type: integer
+          format: int32
+          description: |
+                Código producto del módulo de FISA System.
+                Ítem del catálogo catModule.
+          example: 6
+          nullable: true
+        idtype:
+          type: integer
+          format: int32
+          description: |
+                Código tipo de producto del producto de FISA System.
+                Ítem del catálogo catTypeProduct.
+          example: 1
+          nullable: true
+        currency:
+          type: integer
+          format: int32
+          description: |
+                Código moneda del producto FISA System.
+                Ítem del catálogo catCurrency.
+          example: 0
+          nullable: true
+        sourceCod:
+          type: integer
+          format: int32
+          description: |
+                Código del Origen de Fondos. 
+                Ítem catálogo 69.
+          example: 1      
+          nullable: true
+        dateFrom:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                Fecha desde de vigencia de la parametrización de origen de fondos.
+          example: "2022/10/28"
+          nullable: true
+        sourceCat:
+          type: integer
+          format: int32
+          description: |
+                Código catálogo Origen de Fondos. Por defecto 69.
+          enum: [69]
+          nullable: true
+        dateTo:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+                Fecha hasata la cual está vigente la parametrización de origen de fondos.
+          example:
+          nullable: true
+        rateCatIodp:
+          type: integer
+          format: int32
+          description: |
+                No aplica. Código catálogo de Tasas Referenciasles. Por defecto 69.
+          enum: [69]
+          nullable: true
+        rateIodp:
+          type: integer
+          format: int32
+          description: |
+                No aplica. Código tasa referencial aplicables al ISCV - interés sobre capital vencido.
+          nullable: true
+        spredIodp:
+          type: number
+          description: |
+                No aplica. Margen a añadir a la tasa referencial para el cobro del SCV - interés sobre capital vencido.
+          nullable: true
+        percentaje:
+          type: number
+          description: |
+                 No aplica. Valor del porcentaje. 
+          minimum: 0
+          maximum: 100
+          nullable: true
+    OtrWarnigs:
+      type: object
+      description: |
+                Detalle de mensajes presentados durante la ejecución del servicio.
+      properties:
+        message:
+          type: string
+          description: |
+                Texto del mensaje.
+    ProProductOut:
+      type: object
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object        
+          properties:
+            productinfo:
+              $ref: '#/components/schemas/OtrProduct'
+            productloanparam:
+              $ref: '#/components/schemas/OtrProductloanparam'
+            levelinformation:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrLevelinformation'
+            sourcefundsbypro:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrSourcefundsbypro'
+            activeratebypro:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrActiveratebypro'
+            chargesbypro:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrChargesbypro'
+            messagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK. 
+              
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    X-ConversationId:
+      description: |
+        Identificador único de la conversación del servicio.
+
+        Por cada servicio que interviene en la orquestación se tiene un id de conversación.
+
+      example: "59491c7e-ad88-49ec-a2ad-99ddcb1f5674"
+
+      type: string
+      format: uuid
+
+    X-ChannelId:
+      description: |
+        Id del canal desde el cual se se está invocando el servicio. 
+        Ítem de catálogo 139.
+
+        Ej. de osibles Valores:
+           "2"    BOTON PAGO
+           "3"    CAJA EXPRESS
+           "5"    CAJA EXTERNA
+      type: string
+      maxLength: 50
+      example: "2"
+      
+    X-CarDealerId:
+      description: |
+        Código del concesionario (Sucursal FISA System) desde donde se está generando el proceso de originación
+
+        Representa el código único asignado a la compañia con la cual se trabajar
+      example: 3
+      type: string
+      minLength: 0
+      maxLength: 20
+
+    X-UserId:
+      description: |
+        Código del usuario FISA System que está realizando el proceso
+        Registrado en la transacción 1/9.
+        Ítem catálogo catUser.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-SellerId:
+      description: |
+        Código del vendedor desde donde se está generando el proceso de originación
+        No definido en FISA System.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-BranchId:
+      description: |
+        Código de la sucursal FISA System desde cual se ejecuta la acción.
+        Registrada en la transacción 1/2.
+        Ítem catálogo catBranch.
+      example: 2
+      type: integer
+      format: int64
+
+    X-OfficeId:
+      description: |
+        Código de la oficina FISA System desde cual se ejecuta la acción.
+        Ítem catálogo catOffice.
+        Relacionada con la sucursal indicada en "branchid". 
+        Registrada en la transacción 1/2.
+      example: 1
+      type: integer
+      format: int64
+      
+    X-EnterpriseCode:
+      description: |
+        Código del Empresa o institución que invoca el servicio
+        No definido en FISA System.
+
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: MAF
+      
+    X-SysCode:
+      description: |
+        Código del Sistema que invoca el servicio.
+        No definido en FISA System.
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: SISCRED
+      
+    ######## FIN INFORMACION INYECCION SOLICITUD ORIGINACION
+
+    Info:
+      description: |
+        Información de cabecera requerida en los servicios como parte del mensaje
+      type: object
+      properties:
+        Consumer:
+          description: |
+            Información del consumidor del servicio
+          type: object
+          properties:
+            sysCode:
+              $ref: "#/components/schemas/X-SysCode"
+            enterpriseCode:
+              $ref: '#/components/schemas/X-EnterpriseCode'
+        Trace:
+          description: |
+            Información para seguimiento del servicio
+          type: object
+          required:
+            - userId
+            - carDealerId
+            - branchId
+            - officeId
+          properties:
+            conversationId:
+              $ref: '#/components/schemas/X-ConversationId'
+            userId:
+              $ref: '#/components/schemas/X-UserId'
+            carDealerId:
+              $ref: '#/components/schemas/X-CarDealerId'
+            sellerId:
+              $ref: '#/components/schemas/X-SellerId'
+            branchId:
+              $ref: '#/components/schemas/X-BranchId'
+            officeId:
+              $ref: '#/components/schemas/X-OfficeId'
+            channelId:
+              $ref: '#/components/schemas/X-ChannelId'
+
+    Result:
+      description: |
+        Resultado de la invocación al servicio
+      type: object
+      required:
+        - status
+        - description
+      properties:
+        status:
+          description: |
+            Estado de la ejecución del servicio
+
+            Los posible valores que puede tener este campo son:
+            - SUCCESS
+            - ERROR
+          type: string
+          enum:
+            - SUCESSS
+            - ERROR
+        description:
+          description: |
+            Descripción del resultado de la invocación al servicio.
+            Puede ser algún texto indicando el resultado
+          type: string
+
+        SourceError:
+          description: |
+            Información en caso de error presentado en el servicio invocado
+          type: object
+          properties:
+            code:
+              description: Código de error devuelto
+              type: string
+            description:
+              description: |
+                Descripción del error devuelto por el servicio invocado
+              type: string
+              
+    ReqHeader:
+      description: |
+        Cabecera para la invocación del servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+
+    RspHeader:
+      description: |
+        Cabecera de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+        Result:
+
+          $ref: '#/components/schemas/Result'
+          
+    ReqMessage:
+      description: |
+        Mensaje para invocación de servicios
+      type: object
+      properties:
+        ReqHeader:
+          $ref: '#/components/schemas/ReqHeader'
+
+    RspMessage:
+      description: |
+        Mensaje de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        RspHeader:
+          $ref: '#/components/schemas/RspHeader'
+
+
+        
+
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
+
+    errorTitle:
+      description: |
+        Descripcion corta leible por humanos del tipo de error. Puede estar en lenguaje local.
+      type: string
+      minLength: 0
+      maxLength: 70
+
+    errorDetail:
+      description: |
+        Texto detallado específico leible por humanos de esta instancia de error.
+
+        Además XPath puede se usado para apuntar a la novedad que está generando el error
+
+      type: string
+      minLength: 0
+      maxLength: 500
+
+    MessageCode400:
+      description: Códigos de mensajes definidos para código de error HTTP 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - FORMAT_ERROR              #gen
+        - PARAMETER_NOT_CONSISTENT  #gen
+        - PARAMETER_NOT_SUPPORTED   #gen
+        - SERVICE_INVALID           #gen
+        - RESOURCE_UNKNOWN          #gen
+        - RESOURCE_EXPIRED          #gen
+        - RESOURCE_BLOCKED          #gen
+        - TIMESTAMP_INVALID         #gen
+        - PERIOD_INVALID            #gen
+        - SCA_METHOD_UNKNOWN        #gen
+        - SCA_INVALID               #gen
+        - CONSENT_UNKNOWN           #gen
+        
+    Error400:
+      description: |
+        Definición estandarizada para reportar información de errores acorde a [RFC7807] en caso de códigos HTTP 400.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            Una referencia URI [RFC3986] que identifica el tipo de problema.
+          type: string
+          format: uri
+          minLength: 0
+          maxLength: 70
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        code:
+          $ref: "#/components/schemas/MessageCode400"
+        additionalErrors:
+          description: |
+            Lista de bloques de información de Error.
+
+            Puede ser usado si mas de un error va a ser comunicado
+          type: array
+          items: #ErrorInformation
+            description: Este es el elemento de datos para soportar la declaración de errores adicionales en el contexto de [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/errorTitle"
+              detail:
+                $ref: "#/components/schemas/errorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400"
+                
+  responses:
+    #################################
+    # Respuestas Afirmativas
+    #################################
+
+    OK_200_ProProduct:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProProductOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/ProProducExample"        
+
+    
+    #################################
+    # Respuestas negativas
+    #################################
+
+    BAD_REQUEST_400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400"
+
+    UNAUTHORIZED_401:
+      description: Error de autenticación
+
+    FORBIDDEN_403:
+      description: Forbidden
+
+    INTERNAL_SERVER_ERROR_500:
+      description: Internal Server Error            
+
+
+  examples:
+    ProProducExample:
+      summary: Obtiene información del producto financiero
+      description: Obtiene información del producto financiero
+      value: {}
+      

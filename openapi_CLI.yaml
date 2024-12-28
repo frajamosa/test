@@ -1,0 +1,5022 @@
+openapi: 3.0.1
+info:
+  title: API - Ingreso, mantenimineto y consulta de Clientes
+  description: |
+    Servicios para crear,actualizar y consultar la Información de Clientes.
+  version: 1.0.0-SNAPSHOT
+servers:
+  - url: http://localhost:9081
+    description: Generated server url
+paths:
+  /client/putcliid/request/{codeCli}/{legalIdType}/{legalId}:
+    post:
+      tags:
+        - client-rest-controller
+      summary: Actualiza información del cliente.
+      operationId: putcliid
+      
+      parameters:
+        - $ref: "#/components/parameters/codeCli"
+        - $ref: "#/components/parameters/legalIdType"
+        - $ref: "#/components/parameters/legalId"
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientPutcliidIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_ClientPutcliid'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                
+                
+  /client/postcli:
+    post:
+      tags:
+        - client-rest-controller
+      summary: Crea cliente.
+      operationId: postcli
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientPostcliIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_ClientPostcliid'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"    
+          
+                
+  /client/getcliid/request/{codeCli}/{legalIdType}/{legalId}:
+    post:
+      tags:
+        - client-rest-controller
+      summary: Consulta información de un cliente.
+      operationId: getcliid
+
+      parameters:
+        - $ref: "#/components/parameters/codeCli"
+        - $ref: "#/components/parameters/legalIdType"
+        - $ref: "#/components/parameters/legalId"
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientGetcliidIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_ClientGettcliid'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"
+          
+components:
+  headers:
+    #####################################################
+    # Reusable Response Header Elements
+    #####################################################
+
+    tokenmcm:
+      schema:
+        type: string
+
+    Location:
+      description: |
+        Localización del recurso creado.
+      schema:
+        type: string
+        format: url
+      required: false
+
+  parameters:
+    #####################################################
+    # Predefined Parameters
+    #####################################################
+    codeCli:
+      name: codeCli
+      in: path
+      description: |
+        Código cliente FISA System.
+        Registrado en la transacción 2/2.
+        Ítem catálogo catClient.
+        * 84875
+      required: true
+      schema:
+          type: number
+          
+          
+    legalIdType:
+      name: legalIdType
+      in: path
+      description: |
+        Identificación del Cliente
+        Posibles valores son:
+        * 0929359503
+      required: true
+      schema:
+        type: string
+        
+
+    legalId:
+      name: legalId
+      in: path
+      description: |
+        Tipo de identificación
+        Posibles valores son:
+        * C - RUC
+        * R - Company
+      required: true
+      schema:
+        type: string
+        enum:
+          - C
+          - R
+ 
+            
+  schemas:
+    #####################################################
+    # INFORMACION DE CLIENTES 
+    #####################################################                
+    ClientPutcliidIn:
+      type: object
+      description: |
+        Información del cliente a actualizar.
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            pniCodcli:
+              type: number
+              description: |
+                Código cliente FISA System.
+                Registrado en la transacción 2/2.
+                Ítem catálogo catClient.
+              example: 84875
+              nullable: true
+            pciTipoid:
+              type: string
+              description: |
+                Tipo de Identificación
+                Ítem catálogo catTypeId.
+              example: C
+              nullable: false
+            pciIdentifica:
+              type: string
+              description: |
+                Identificación del Cliente.
+              example: 104111111            
+              nullable: false
+            ptbPersona:
+              $ref: '#/components/schemas/OtrTcliPersona'
+            ptbDireccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDireccion'
+            ptbTelefono:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTelefono'
+            ptbNatural:
+              $ref: '#/components/schemas/OtrTcliNatural'
+            ptbFamiliar:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliFamiliar'
+            ptbReferencia:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReferencia'
+            ptbTrabajo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTrabajo'
+            ptbIngreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliIngreso'
+            ptbEgreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEgreso'
+            ptbCtaref:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliCtaref'
+            ptbInversion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliInversion'
+            ptbTarjcre:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTarjcre'
+            ptbPropiedad:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliPropiedad'
+            ptbVehiculo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliVehiculo'
+            ptbJuridica:
+              $ref: '#/components/schemas/OtrTcliJuridica'
+            ptbSucjur:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliSucjur'
+            ptbDsadmin:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDsadmin'
+            ptbReplegal:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReplegal'
+            ptbProveedores:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliProveedores'
+            ptbClientes:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliClientes'
+            ptbEmpresa:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEmpresa'
+            ptbDocumento:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDocumento'
+            ptbRefper:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliRefper'
+            ptbDependiente:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDependiente'
+            ptbApoderado:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliApoderado'
+            prbVivienda:
+              $ref: '#/components/schemas/OtrTcliVivienda'
+            prbMilitar:
+              $ref: '#/components/schemas/OtrTcliMilitar'
+            ptbParticipacion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliParticipacion'
+            pcbAction:
+              type: string
+              description: |
+                Indica la acción a realizar, en este caso: Actualizar información del cliente. Valor Fijo 2.
+              example: 2
+            ptbMessagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+              description: |
+                Lista de mensajes que se han presentando durante la ejecución del servicio.
+    OtrTcliApoderado:
+      type: object
+      properties:
+        apdCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        apdCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código del cliente apoderado, que pertenece al banco.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 5669            
+          nullable: true
+        apdEmail:
+          type: string
+          description: |
+            E-mail del apoderado.
+          example: apoderado@gmail.com
+          nullable: true
+        apdIdentifica:
+          type: string
+          description: |
+            Número de identificación del apoderado.
+          example: 78999949
+          nullable: false
+        apdNombre:
+          type: string
+          description: |
+            Nombre del apoderado.
+          example: Juan Abel Mendieta Zurita
+          nullable: false
+        apdNotaria:
+          type: string
+          description: |
+            Nombre de la notaria o juzgado que emitió el poder.
+          example: Notaría Hernán Cuadra Gazmuri
+          nullable: true
+        apdNumpoder:
+          type: string
+          description: |
+            Número de poder otorgado por una notaría, juzgado o cualquier ente legal.
+          example: 135/2024
+          nullable: true
+        apdSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Secuencia interna de la tabla, puede ser apoderado de uno o más clientes.
+          example: 1
+          nullable: false
+        apdTipoid:
+          type: string
+          description: |
+            Tipo de identificación. 
+            Ítem del catálogo catTypeId.
+          example: C
+          nullable: false
+    OtrTcliClientes:
+      type: object
+      description: |
+            Principales Clientes del Cliente Jurídico de la Institución Financiera.
+      properties:
+        cltCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 1216308
+          nullable: false
+        cltCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código del principal cliente, si es cliente del Banco.
+          example: 
+          nullable: true
+        cltCodmon:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda. 
+            Ítem catálogo catCurrency.
+          nullable: true
+          example: 0
+        cltEmail:
+          type: string
+          description: |
+            Cuenta de correo electrónico del cliente.
+          example: clientOfYourLegalClient@gmail.com
+          nullable: true
+        cltFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        cltIdentificacion:
+          type: string
+          description: |
+            Identificación del cliente.
+          example: 71216308
+          nullable: true
+        cltMonto:
+          type: number
+          description: |
+            Monto relacionado.
+          example: 
+          nullable: true
+        cltNombre:
+          type: string
+          description: |
+            Nombre del cliente.
+          example: Juan Adriazola Elgueta
+          nullable: false
+        cltPais:
+          type: integer
+          format: int32
+          description: |
+            País de residencia. 
+            Ítem catálogo 65.
+          example: 160
+          nullable: true
+        cltSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Secuencial por persona jurídica de la cual sea cliente.
+          example: 5  
+          nullable: false
+        cltTabpais:
+          type: integer
+          format: int32
+          enum: [65]
+          description: |
+            Código del catálogo de países. 
+            Por defecto código catálogo 65.
+          nullable: false
+        cltTabtipoper:
+          type: integer
+          format: int32
+          enum: [57]
+          description: |
+            Código del catálogo de tipo de persona. 
+            Por defecto código catálgo 57.
+          nullable: false
+        cltTipoid:
+          type: string
+          description: |
+            Tipo de Identificación. 
+            Ítem del catálogo catTypeId.
+          example: C
+          nullable: true
+        cltTipoper:
+          type: integer
+          format: int32
+          description: |
+            Tipo de persona. 
+            Ítem catálogo 57.
+          nullable: false
+        cltUsrver: 
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System, que realiza la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        cltVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "S"
+          nullable: false
+    OtrTcliCtaref:
+      type: object
+      description: |
+            Cuentas de Referencia del cliente (Natural o Jurídico).
+      properties:
+        cueCifmanejo:
+          type: integer
+          format: int32
+          description: |
+            Número de cifras de manejo.
+          example: 3
+          nullable: true
+        cueCifras:
+          type: integer
+          format: int32
+          description: |
+            Código del número de cifras de manejo. 
+            Ítem del catálogo 46.
+          example: 2
+          nullable: true
+        cueCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que ejecuta la acción.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 569 
+          nullable: false
+        cueCodtab:
+          type: integer
+          format: int32
+          enum: [20]
+          description: |
+            Código del tipo de cuenta (Ahorros, corriente, etc.). 
+            Ítem del catálogo 20.
+          example: 2
+          nullable: false
+        cueFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        cueInstitucion:
+          type: integer
+          format: int32
+          description: |
+            Código de la institución. 
+            Ítem del catálogo 2.
+          example: 8
+          nullable: true
+        cueMoneda:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda de la cuenta.
+            Ítema catálogo catCurrency.
+          example: 2
+          nullable: true
+        cueNumero:
+          type: integer
+          format: int32
+          description: |
+            Número de cuenta.
+          example: 4010178452
+          nullable: false
+        cueObserva:
+          type: string
+          description: |
+            Observaciones generales de la cuenta. 
+          example: Información sensible.
+          nullable: true
+        cuePais:
+          type: integer
+          format: int32
+          description: |
+            Código del País de la cuenta bancaria del cliente. 
+            Ítem del catálogo 65.
+          example: 160
+          nullable: true
+        cueSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial. Para identificar cuentas referenciales por cliente.
+          example: 1
+          nullable: false
+        cueTabcif:
+          type: integer
+          format: int32
+          enum: [46]
+          description: |
+            Código del número de cifras de manejo. 
+            Valor por defecto 46.
+          nullable: false
+        cueTabins:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de institución. Valor por defecto 2.
+          example: 4
+          nullable: false
+        cueTabpais:
+          type: integer
+          format: int32
+          enum: [65]
+          description: |
+            Código del tipo de institución. 
+            Valor por defecto 65.
+          nullable: false
+        cueTipo:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de cuenta. 
+            Ítem del catálogo 20.
+          example: 2
+          nullable: false
+        cueUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157             
+          nullable: false
+        cueVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no          
+          example: "S"
+          nullable: false
+    OtrTcliDependiente:
+      type: object
+      description: |
+            Personas dependientes del cliente natural.
+      properties:
+        depCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        depCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System dependiente.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875            
+          nullable: true
+        depCodtab:
+          type: integer
+          format: int32
+          description: |
+            Catálogo de Parentesco. 
+            Valor por defecto 16.
+          enum: [16]
+          nullable: false
+        depEmail:
+          type: string
+          description: |
+            Cuenta de correo del dependiente.
+          example: dependiente@gmail.com
+          nullable: true
+        depFecnacim:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de nacimiento.
+          example: "2002/11/19"
+          nullable: false
+        depFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de la información.
+          example: "2024/05/30"
+          nullable: false
+        depIdentifica:
+          type: string
+          description: |
+            Número de la identificación del cliente.
+          example: 86643325
+          nullable: true
+        depNombre:
+          type: string
+          description: |
+            Nombre del dependiente.
+          example: Ramirito Jr. Ponce Velzco
+          nullable: false
+        depParentezco:
+          type: integer
+          format: int32
+          description: |
+            Código del parentesco. Ítem del catálogo 16.
+          example: 3
+          nullable: false
+        depSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial para permitir el registro de uno o más dependientes para cada cliente.
+          example: 1
+          nullable: false
+        depTipoid:
+          type: string
+          description: |
+            Tipo de Identificación. 
+            Ítem del catálogo catTypeId.
+          example: C
+          nullable: true
+        depUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        depVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "S"
+          nullable: false
+    OtrTcliDireccion:
+      type: object
+      description: |
+            Información de las direcciones del cliente natural o jurídico.
+      properties:
+        dirApartado:
+          type: string
+          description: |
+            Número de Apartado Postal.
+          example: 10804
+          nullable: true
+        dirApartamento:
+          type: string
+          description: |
+            Número del Apartamento / Local
+          example: 21
+          nullable: true
+        dirBarrio:
+          type: integer
+          format: int32
+          description: |
+            Código del Barrio. 
+            Ítem del catálogo 66.
+          example: 1023
+          nullable: true
+        dirCalle:
+          type: string
+          description: |
+            Texto libre para el registro de la calle de la dirección.
+          example: Villa BRISAS DE LA RIBERA
+          nullable: true
+        dirCiudad:
+          type: integer
+          format: int32
+          description: |
+            Código de la Ciudad en la que se encuentra la dirección. 
+            Ítem del catálogo 1.
+          example: 1327
+          nullable: false
+        dirCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código del Cliente FISA System al cual corresponde la dirección.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        dirComuna:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true
+        dirDireccion:
+          type: string
+          description: |
+            Texto libre 1, para el registro de la dirección y sus referencias.
+          example: Construcción de color verde.  
+          nullable: true
+        dirDireccion2:
+          type: string
+          description: |
+            Texto libre 2, para el registro de la dirección y sus referencias.
+          example: Frente a la ensambladora Velez  
+          nullable: true
+        dirDireccion3:
+          type: string
+          description: |
+            Texto libre 3, para el registro de la dirección y sus referencias.
+          example: Lado norte del obelisco Juarez.
+          nullable: true
+        dirEdificio:
+          type: string
+          description: |
+            Texto libre para el registro del Nombre del Edificio si fuera el caso.
+          example: Alpallana I
+          nullable: true
+        dirFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        dirNumcasa:
+          type: string
+          description: |
+            Número de la dirección del cliente sea un edificio, casa, etc.
+          example: "CATEDRAL 1330, DPTO 1902"
+          nullable: true
+        dirNumero:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial por cliente, para la identificación única de cada dirección.
+          example: 1
+          nullable: false
+        dirNumlod:
+          type: string
+          description: |
+            Número del local de la dirección del cliente sea un edificio, casa, etc.
+          nullable: true
+        dirPais:
+          type: integer
+          format: int32
+          description: |
+            Código del País de la dirección, corresponde a un ítem del catálogo 65.
+          example: 160
+          nullable: false
+        dirPiso:
+          type: string
+          description: |
+            Texto libre para el registro del número del piso de la dirección en un edificio.
+          example:
+          nullable: true
+        dirSector:
+          type: string
+          description: |
+            Texto libre en el cual se detalla el sector de la dirección.
+          example: CENTRO
+          nullable: true
+        dirTabbarrio:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Barrio. 
+            Valor por defecto 66.
+          enum: [66]
+          nullable: false
+        dirTabcalle:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo de Calle. 
+            Valor por defecto 138.
+          enum: [112]
+          nullable: false
+        dirTabciudad:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Ciudad. 
+            Valor por defecto 1.
+          enum: [1]
+          nullable: false
+        dirTabcomuna:
+          type: integer
+          format: int32
+          description: |
+            Campo no aplica
+          nullable: false
+        dirTabpais:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo País. 
+            Valor por defecto 65.
+          enum: [65]
+          nullable: false
+        dirTabtip:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo de Dirección. 
+            Valor por defecto 23.
+          enum: [23]
+          nullable: false
+        dirTabtipolod:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo de Local. 
+            Valor por defecto 238.
+          enum: [238]
+          nullable: false
+        dirTabzona:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Zona Postal. 
+            Valor por defecto 76.
+          enum: [76]
+          nullable: false
+        dirTipocalle:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo Calle. 
+            Ítem catálgo 138.
+          example: 2
+          nullable: false
+        dirTipodir:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo Dirección. 
+            Valor por defecto 23.
+          example: 1
+          enum: [23]
+          nullable: false
+        dirTipolod:
+          type: integer
+          format: int32
+          description: |
+            Tipo de Local. 
+            ítem catálogo 238.
+          example: 
+          nullable: false
+        dirUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        dirVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+        dirZipcode:
+          type: integer
+          format: int32
+          description: |
+            Número del Zip Code o código de área de la dirección.
+          example: 10127
+          nullable: true
+        dirZona:
+          type: integer
+          format: int32
+          description: |
+            Código de la Zona Postal, en la que se encuentra ubicada la dirección, corresponde a un ítem del catálogo 76.
+          example: 7510115
+          nullable: true
+    OtrTcliDocumento:
+      type: object
+      description: |
+            Detalle de los documentos entregados por el cliente natural o jurídico a la Institución Financiera.
+      properties:
+        docCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875            
+          nullable: false
+        docSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial, para permitir el registro de varios documentos para un mismo cliente.
+          example: 1
+          nullable: false
+        docCodtab:
+          type: string
+          format: int32
+          description: |
+            Código del catálogo Tipo de documento, corresponde al código de catálogo 53 para clientes naturales o 28 para clientess jurídicos.
+          enum: ["53", "28"] # 53 para Natural, 28 para Jurídico
+          example: "53"
+          nullable: false
+        docTipo:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de documento, corresponde a un ítem del catálogo 53 (naturales) o 28 (jurídicos).
+          example: 1
+          nullable: false
+        docFechapres:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de presentación o entrega del documento.
+          example: "2022/12/20"
+          nullable: true
+        docFechacad:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de caducidad del documento.
+          example: "2030/05/29"
+          nullable: true
+        docCodimagen: 
+          type: string
+          description: |
+            Campo no utilizado.
+          nullable: true
+        docVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no  
+          example: "S"
+          nullable: false
+        docFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        docUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+    OtrTcliDsadmin:
+      type: object
+      description: |
+            Directores Socios Administradores por Sucursal de Empresa (Cliente Jurídico).
+      properties:
+        dsaApellidos:
+          type: string
+          description: |
+            Apellidos de los directores, socios, administradores, accionistas.
+          example: DURÁN TORRES
+          nullable: true
+        dsaCargo:
+          type: string
+          description: |
+            Descripción del Cargo del socio y/o administrador.
+          example: GERENTE ADMINISTRATIVO
+          nullable: true
+        dsaCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875            
+          nullable: false
+        dsaCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código del cliente directivo, como cliente de la Institución Financiera.
+          example: 542
+          nullable: true
+        dsaDireccion:
+          type: string
+          description: |
+            Campo de texto libre 1, para el registro de la dirección y sus referencias.
+          example: AV. DE LOS ÁLAMOS Y OLIVEIRO ROJAS
+          nullable: true
+        dsaDireccion2:
+          type: string
+          description: |
+            Campo de texto libre 2, para el registro de la dirección y sus referencias
+          example: CONJUNTO RESIDENCILA "LUPITAS"
+          nullable: true
+        dsaEmail:
+          type: string
+          description: |
+            Cuenta de correo electrónico.
+          example: joserola@gmail.com
+          nullable: true
+        dsaFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información. 
+          example: "2024/05/30"
+          nullable: false
+        dsaIdentifica:
+          type: string
+          description: |
+            Identificación del socio.
+          example: 858585200
+          nullable: false
+        dsaIdentificant:
+          type: string
+          description: |
+             Identificación anterior de los directores socios administradores.
+          example: 8999664210
+          nullable: true
+        dsaNombre:
+          type: string
+          description: |
+            Nombre del socio y/o administrador.
+          example: JOSÉ ROLANDO 
+          nullable: false
+        dsaNumsuc:
+          type: integer
+          format: int32
+          description: |
+            Número de sucursal.
+          example: 45
+          nullable: true
+        dsaSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial de regustro del socio del cliente.
+          example: 1
+          nullable: false
+        dsaTelefono:
+          type: string
+          description: |
+            Teléfono 1 de los directores socios administradores.
+          example: 222900000
+          nullable: true
+        dsaTelefono2:
+          type: string
+          description: |
+            Teléfono 2 de los directores socios administradores
+          nullable: true
+          example: 222900001
+        dsaTipo:
+          type: string
+          description: |
+            Tipo de relación director, socio o administrador.
+            Corresponde a un ítem del catálogo 113.
+          example: 3
+          nullable: false
+        dsaTipoid:
+          type: string
+          description: |
+            Tipo de Identificación. 
+            Ítem del catálogo catTypeId.
+          example: C
+          nullable: false
+        dsaTipoidant:
+          type: string
+          description: |
+            Tipo de Identificación anterior. 
+            Ítem del catálogo catTypeId.
+          example: C
+          nullable: true
+        dsaTipotel:
+          type: string
+          description: |
+            Tipo de teléfono 1 de los directores socios administradores , detalle registrado en cliTipoTel.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERIOR
+          nullable: true
+        dsaTipotel2:
+          type: string
+          description: |
+            Tipo de teléfono 2 de los directores socios administradores , detalle registrado en cliTipoTel.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, 
+          nullable: true
+        dsaUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        dsaVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliEgreso:
+      type: object
+      description: |
+            Detalle de egresos del cliente.
+      properties:
+        egrCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        egrCodegr:
+          type: integer
+          format: int32
+          description: |
+            Código de la justificación de egreso del cliente. 
+            Corresponde a un ítem del catálogo 25.
+          example: 9
+          nullable: false
+        egrCodtab:
+          type: integer
+          format: int32
+          description: |
+            Código de la justificación de egreso del cliente, por defecto 25.
+          enum: [25]
+          nullable: false
+        egrFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"            
+          nullable: false
+        egrMoneda:
+          type: integer
+          format: int32
+          description: |
+            Moneda en la cual se considera el egreso. 
+            Ítem del catálogo de catCurrency.
+          example: 0
+          nullable: true
+        egrRenta:
+          type: string
+          description: |
+            Tipo de renta.
+          enum: [F, V] # Valores permitidos: "F" renta fija, "V" renta variable
+          example: "V"
+          nullable: true
+        egrUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        egrValor:
+          type: number
+          description: |
+            Valor del egreso registrado.
+          example: 760000
+          nullable: true
+        egrVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliEmpresa:
+      type: object
+      description: |
+            Empresas Afiliadas, Subsidiarias o Relacionadas al Negocio del Cliente Jurídico.
+      properties:
+        empCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        empSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Secuencial por persona jurídica con la cual tenga relación.
+            example: 1
+          nullable: false
+        empIdentifica:
+          type: string
+          description: |
+            Número de identificación.
+          example: 78900000
+          nullable: true
+        empCodtab:
+          type: integer
+          format: int32
+          description: |
+            Código general del tipo de empresa, por defecto 50.
+          enum: [50]
+          nullable: false
+        empTipoemp:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de empresa, corresponde a un ítem del catálogo 50.
+          example: 6
+          nullable: true
+        empNombre:
+          type: string
+          description: |
+            Nombre de la empresa afiliada.
+          example: Jumbo
+          nullable: true
+        empDireccion:
+          type: string
+          description: |
+            Dirección de la empresa afiliada.
+          example: Av. Francisco Bilbao 8750, La Reina, Santiago
+          nullable: true
+        empTipotel:
+          type: string
+          description: |
+            Tipo de teléfono 1.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERIOR.
+          example: F
+          nullable: true
+        empTelefono:
+          type: string
+          description: |
+            Número telefónico 1.
+          example: 27705000
+          nullable: true
+        empTipotel2:
+          type: string
+          description: |
+            Tipo de teléfono 2.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERIOR.
+          example: F
+          nullable: true
+        empTelefono2:
+          type: string
+          description: |
+            Número telefónico 2
+          example: 229545000
+          nullable: true
+        empVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+        empFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"  
+          nullable: false
+        empUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        empEmail:
+          type: string
+          description: |
+            Cuenta de correo electrónico.
+          example: contacto@jumbo.cl
+          nullable: true
+        empCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código de la empresa realacionada, como cliente de la Institución Financiera.
+          example: 888
+          nullable: true
+    OtrTcliFamiliar:
+      type: object
+      description: |
+            Familiares dependientes del Cliente Natural.
+      properties:
+        famBarrio:
+          type: integer
+          format: int32
+          description: |
+            Código del barrio donde reside el familiar del cliente, corresponde a un ítem del catálogo 66.
+          example: 1009
+          nullable: true
+        famCiudad:
+          type: integer
+          format: int32
+          description: |
+            Código de la ciudad de residencia del familiar, corresponde a un ítem del catálogo 1.
+          example: 105
+          nullable: false
+        famCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        famCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código del cliente familiar, que pertenece al banco.
+          example: 
+          nullable: true
+        famComuna:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true
+        famDireccion1:
+          type: string
+          description: |
+            Campo de texto libre 1, para el registro de la dirección y sus referencias.
+          example: CALLE QUEBRADA DEL SALADO 975 
+          nullable: true
+        famDireccion2:
+          type: string
+          description: |
+            Campo de texto libre 2, para el registro de la dirección y sus referencias.
+          example:
+          nullable: true
+        famDireccion3:
+          type: string
+          description: |
+            Campo de texto libre 3, para el registro de la dirección y sus referencias.
+          example: 
+          nullable: true
+        famEmail:
+          type: string
+          description: |
+            Cuenta de correo electrónico del familiar.
+          example: jorgeAlfaro@gmail.com
+          nullable: true
+        famFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        famNombre:
+          type: string
+          description: |
+            Nombre del familiar del cliente.
+          example: JORGE ALFREDO ALFARO JERMON
+          nullable: false
+        famPais:
+          type: integer
+          format: int32
+          description: |
+            Código del País de residencia del familiar, corresponde a un ítem del catálogo 65.
+          example: 160
+          nullable: false
+        famParentezco:
+          type: integer
+          format: int32
+          description: |
+            Código del parentesco, corresponde a un ítem del catálogo 16.
+          example: 13
+          nullable: false
+        famSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial de los parientes que pueden registrarse a un cliente. Para un cliente pueden registrarse uno o más parientes o familiares.
+          example: 1
+          nullable: false
+        famTabbarrio:
+          type: integer
+          format: int32
+          description: |
+            Código de la tabla de barrios donde reside el familiar del cliente, por defecto 66.
+          enum: [66]
+          nullable: false
+        famTabciu:
+          type: integer
+          format: int32
+          description: |
+            Código catálgodo de ciudades de residencia del familiar, por defecto 1.
+          enum: [1]
+          nullable: false
+        famTabcomuna:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true
+        famTabpais:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de países, por defecto 65. 
+          enum: [65]
+          nullable: false
+        famTabpar:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo parentesco, por defecto 16.
+          enum: [16]
+          nullable: false
+        famTelefono:
+          type: string
+          description: |
+            Número telefónico del familiar.
+          example: 92088997
+          nullable: true
+        famTipotel:
+          type: string
+          description: |
+            Tipo de teléfono 1.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERIOR.
+          example: C
+          nullable: true
+        famUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        famVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliIngreso:
+      type: object
+      description: |
+            Registro de ingresos económicos del cliente natural.
+      properties:
+        ingCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        ingCoding:
+          type: integer
+          format: int32
+          description: |
+            Código de la actividad que genera ingresos al cliente, corresponde a un ítem del catálogo 24.
+          example: 1
+          nullable: false
+        ingCodtab:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de actividades que genera ingresos al cliente, por defecto 24.
+          enum: [24]
+          nullable: false
+        ingFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        ingMoneda:
+          type: integer
+          format: int32
+          description: |
+            Moneda en la que registra el ingreso.
+            Ítem catálgo catCurrency.
+          example: 0
+          nullable: true
+        ingRenta:
+          type: string
+          description: |
+            Tipo de Renta.
+          enum: [F, V] # Valores permitidos: "F" renta fija, "V" renta variable
+          example: F
+          nullable: true
+        ingUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        ingValor:
+          type: number
+          description: |
+            Valor del ingreso.
+          example: 500000
+          nullable: true
+        ingVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "S"
+          nullable: false
+    OtrTcliInversion:
+      type: object
+      description: |
+            Inversiones del Cliente Natural.
+      properties:
+        invCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        invCodtab:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo tipo de inversión, por defecto 36.
+          enum: [36]
+          nullable: false
+        invFechaven:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de vencimiento.
+          nullable: false
+        invFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        invInstitucion:
+          type: integer
+          format: int32
+          description: |
+            Código de la institución. Este listado depende del tipo de institución seleccionado en invTabinv.
+          example: 28
+          nullable: false
+        invMoneda:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda de la inversión. Ítem del catálogo de Monedas catCurrency.
+          example: 0
+          nullable: false
+        invMonto:
+          type: number
+          description: |
+            Monto de la inversión.
+          example: 100000
+          nullable: false
+        invSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial que permite registrar varias inversiones por cada cliente.
+          example: 1
+          nullable: false
+        invTabinv:
+          type: integer
+          format: int32
+          description: |
+            Código del Catálogo del Tipo de institución en la cual mantiene la inversión el cliente.
+          enum: [10, 2, 9, 8, 3, 4] # Valores permitidos: "2"  Bancos  Cod. Super - Iban, "3"  Financieras, "4"  Mutualistas/Asociaciones, "8"  Asociaciones Ahorro-Prest, "9"  Agentes De Bolsa, "10"  Administradoras De Fondos.
+          example: 2
+          nullable: false
+        invTipo:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de inversión, corresponde a un ítem del catálogo 36.
+          example: 1
+          nullable: false
+        invUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        invVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliJuridica:
+      type: object
+      description: |
+            Personas Jurídicas.
+      properties:
+        jurActividad:
+          type: integer
+          format: int32
+          description: |
+            Código de la actividad de la persona jurídica, corresponde a un ítem del catálogo 19. 
+          example: 14
+          nullable: false
+        jurClase:
+          type: integer
+          format: int32
+          description: |
+            Código de la clase de empresa, corresponde a un ítem del catálogo 27.
+          example: 5
+          nullable: false
+        jurCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 139925
+          nullable: false
+        jurCodtab:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de tipos de empresa, por defecto 50.
+          enum: [50]
+          nullable: false
+        jurCodtabact:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de actividades de persona jurídica, por defecto 19.
+          enum: [19]
+          nullable: false
+        jurCodtabcla:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de clases de empresa, por defecto 27,
+          enum: [27]
+          nullable: false
+        jurFechacons:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de constitución de la persona jurídica. 
+          example: "2024/05/30"
+          nullable: false
+        jurFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        jurNacionalidad:
+          type: integer
+          format: int32
+          description: |
+            Código de la Nacionalidad del cliente jurídico, corresponde a un ítem del catálogo 13.
+          example: 1
+          nullable: true
+        jurNombre:
+          type: string
+          description: |
+            Nombre de la persona jurídica.
+          example: COMERCIALIZACION DE EXCEDENTES INDUSTRIALES CHATARRA, METALES, FIERROS, DESECHOS, Y TRANSP
+          nullable: true
+        jurNumemp:
+          type: integer
+          format: int32
+          description: |
+            Número de empleados.
+          example: 100
+          nullable: true
+        jurPais:
+          type: integer
+          format: int32
+          description: |
+            Código del País del cliente jurídico, corresponde a un ítem del catálogo 65.
+          example: 160
+          nullable: true
+        jurPrinprod:
+          type: string
+          description: |
+            Descripción del principal producto de la persona jurídica.
+          example: 
+          nullable: true
+        jurPromventa:
+          type: number
+          description: |
+            Promedio de venta diaria.
+          nullable: true
+        jurRegmerc:
+          type: string
+          description: |
+            Número de registro mercantil
+          example: 
+          nullable: true
+        jurSector:
+          type: integer
+          format: int32
+          description: |
+            Código de sector económico al que pertenece el cliente, corresponde a un ítem del catálogo 168.
+          example: 309
+          nullable: true
+        jurTabnac:
+          type: integer
+          format: int32
+          description: |
+            Código General de Nacionalidad, por defecto 13.
+          example: 1
+          enum: [13]
+          nullable: false
+        jurTabpais:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de países, por defecto 65.
+          enum: [65]
+          nullable: false
+        jurTabsector:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de sector económico, por defecto 168.
+          enum: [168]
+          nullable: false
+        jurTipoemp:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de empresa, corresponde a un ítem del catálogo 50.
+          example: 14
+          nullable: false
+        jurUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        jurVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliMilitar:
+      type: object
+      description: Datos Militares de Personas Naturales en caso de ejercer esta función.
+      properties:
+        milBrigada:
+          type: integer
+          format: int32
+          description: |
+            Código de brigada militar, corresponde a un ítem del catálogo 103.
+          example: 1
+          nullable: true
+        milCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        milCodisfa:
+          type: string
+          description: |
+            Código ISFA.
+          example: 520
+          nullable: true
+        milFeching:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de ingreso.
+          example: "2012/01/20"
+          nullable: true
+        milFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        milGrado:
+          type: integer
+          format: int32
+          description: |
+            Grado militar. Depende del código de fuerzas armadas seleccionado en milTabFuerza, según este código se obtiene un ítem específico.
+          example: 2
+          nullable: false
+        milServicio:
+          type: string
+          description: |
+            Tipo de servicio que cumple el cliente dentro de su rango militar.
+          enum: [A, P] # Valores permitidos: "A" activo, "P" pasivo
+          example: "P"
+          nullable: false
+        milTabbrigada:
+          type: integer
+          format: int32
+          description: |
+            Código de tabla de tablas de brigada militares , por defecto 103.
+          enum: [103]
+          nullable: false
+        milTabfuerza:
+          type: integer
+          format: int32
+          description: |
+            Código del nivel de las fuerzas armadas al cual pertenece, código de los catálogos 47,48,49,
+          enum: [47,48,49] # Valores permitidos: "47" - Grados Militares (F.Terrestre), "48" - Grados Militares (F.Aérea), "49" - Grados Militares (F.Naval)
+          example: 1
+          nullable: false
+        milTabunidad:
+          type: integer
+          format: int32
+          description: |
+            Código de taba de tablas de unidades militares, por defecto 108.
+          enum: [108]
+          nullable: false
+        milUnidad:
+          type: integer
+          format: int32
+          description: |
+            Código de unidad militar, corresponde a un ítem del catálogo 108.
+          example: 1
+          nullable: true
+        milUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código de unidad militar, corresponde a un ítem del catálogo 108
+          nullable: false
+        milVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliNatural:
+      type: object
+      description: |
+            Información clientes naturales.
+      properties:
+        natActprin:
+          type: integer
+          format: int32
+          description: |
+            Actividad principal del cliente, corresponde a un ítem del catálogo 18.
+          example: 183
+          nullable: true
+        natActsec:
+          type: integer
+          format: int32
+          description: |
+            Actividad secundaria del cliente, corresponde a un ítem del catálogo 18.
+          example: 
+          nullable: true
+        natApecasada:
+          type: string
+          description: |
+            Apellido de casada cuando el cliente tiene sexo Femenino.
+          example: 
+          nullable: true
+        natApematerno:
+          type: string
+          description: |
+            Apellido materno del cliente.
+          example: ARRIAGADA
+          nullable: true
+        natApepaterno:
+          type: string
+          description: |
+            Apellido paterno del cliente.
+          example: RIVEROS
+          nullable: true
+        natApoderado:
+          type: string
+          description: |
+            Indica si el cliente es apoderado o no de otro cliente S/N.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no   
+          example: N
+          nullable: false
+        natCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        natDependiente:
+          type: string
+          description: |
+            Indica si el cliente mantiene algún tipo de relación con otro u otros clientes S/N.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: N
+          nullable: true
+        natEducacion:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de educación, corresponde a un ítem del catálogo 911.
+          example: 6
+          nullable: true
+        natEstciv:
+          type: integer
+          format: int32
+          description: |
+            Estado civil, corresponde a un ítem del catálogo 15.
+          example: 2
+          nullable: false
+        natFecnacim:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de nacimiento del cliente.
+          example: "1984/03/22"
+          nullable: true
+        natFecvenruc:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de vencimiento del RUC.
+          example: "2030/10/01"
+          nullable: true
+        natFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        natGruponat:
+          type: integer
+          format: int32
+          description: |
+            Grupo o asociación de personas naturales, corresponde a un ítem del catálogo 51.
+          example: 
+          nullable: true
+        natNacionalida:
+          type: integer
+          format: int32
+          description: |
+            Código de nacionalidad, corresponde a un ítem del catálogo 13.
+          example: 99
+          nullable: false
+        natNombre:
+          type: string
+          description: |
+            Nombres del cliente.
+          example: EDITH GABRIELA
+          nullable: true
+        natNumdepend:
+          type: integer
+          format: int32
+          description: |
+            Número de personas dependientes.
+          example: 0
+          nullable: true
+        natPrimnom:
+          type: string
+          description: |
+            Primer nombre del cliente natural.
+          example: EDITH
+          nullable: true
+        natProfesion:
+          type: integer
+          format: int32
+          description: |
+            Código de profesión del cliente, corresponde a un ítem del catálogo 14.
+          example: 123
+          nullable: false
+        natRuc:
+          type: string
+          description: |
+            Número de RUC para personas naturales.
+          example: 
+          nullable: true
+        natSector:
+          type: integer
+          format: int32
+          description: |
+            Código de Sector Económico al cual pertenece el cliente, corresponde a un ítem del catálogo 168.
+          example: 113
+          nullable: true
+        natSegunom:
+          type: string
+          description: |
+            Segundo nombre del cliente natural.
+          example: GABRIELA
+          nullable: true
+        natSepbienes:
+          type: string
+          description: |
+            Indica su el cliente tiene separación de bienes S/N.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: 
+          nullable: true
+        natSexo:
+          type: string
+          description: |
+            Sexo del cliente.
+          enum: [M, F] # Valores permitidos: "M" masculino, "F" femenino
+          example: F
+          nullable: true
+        natStatus:
+          type: string
+          description: |
+            Estado actual del cliente.
+          enum: [A, P, F] # Valores permitidos: "A" Cliente Activo, "P" Cliente Pasivo, "F" Cliente Fallecido.
+          example: A
+          nullable: true
+        natTabactprin:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de Actividad Principal del cliente, por defecto 18.
+          enum: [18]
+          nullable: false
+        natTabactsec:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de Actividad Principal del cliente, por defecto 18.
+          enum: [18]
+          nullable: false
+        natTabedu:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo del Nivel de Educación del cliente, por defecto 911.
+          enum: [911]
+          nullable: false
+        natTabestciv:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo del Estado Civil del cliente, por defecto 15.
+          enum: [15]
+          nullable: false
+        natTabgruponat:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo del Grupos o Asociaciones a las que puede pertenecer una persona natural, por defecto 51.
+          enum: [51]
+          nullable: false
+        natTabnac:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo de Nacionalidades, por defecto 13.
+          enum: [13]
+          nullable: false
+        natTabpro:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo de Profesiones, por defecto 14.
+          enum: [14]
+          nullable: false
+        natTabsector:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo de Sectores Económicos, por defecto 168.
+          enum: [168]
+          nullable: false
+        natTabvivienda:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo de Tipos de Vivienda, por defecto 180.
+          enum: [180]
+          nullable: false
+        natTipo:
+          type: string
+          description: |
+            Tipo de persona.
+          enum: [M, C] # Valores permitidos: "M" Militar, " / "C" "Civil
+          example: C
+          nullable: true
+        natUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        natVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+        natVivalq:
+          type: integer
+          format: int32
+          description: |
+            La vivienda del cliente es alquilada o es propia, corresponde a un ítem del catálogo 180.
+          example: 4
+          nullable: true
+    OtrTcliParticipacion:
+      type: object
+      description: |
+            Participación de Acciones en Empresas
+      properties:
+        parClicodigo:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        parIdgrupec:
+          type: string
+          description: |
+            Identificador del grupo económico.
+          example: 2549001
+          nullable: false
+        parTipoidge:
+          type: string
+          description: |
+            Tipo de identificación del grupo económico.
+            Ítem del catálogo catTypeId.
+          example: R
+          nullable: false
+        parNombregrupec:
+          type: string
+          description: |
+            Nombre del grupo económico
+          example: Bancaribe Curazao Bank
+          nullable: false
+        parPorcentaje:
+          type: number
+          description: |
+            Porcentaje de participación del cliente en un grupo económico. No puede ser mayor que 100.
+          minimum: 1
+          maximum: 100
+          example: 24
+          nullable: false
+    OtrTcliPersona:
+      type: object
+      description: |
+            Clientes naturales y jurídicos de la Institución Financiera en general.
+      properties:
+        cliCatdeudor:
+          type: integer
+          format: int32
+          description: |
+            Categoría del deudor, corresponde a un ítem del catálogo 913.
+          example: 3
+          nullable: true
+        cliCodciiu:
+          type: string
+          description: |
+            Código de Actividad CIIU. 
+            Ítem catálogo catCiiu.
+          example: 6712
+          nullable: true
+        cliCodeje:
+          type: integer
+          format: int32
+          description: |
+            Código del Ejecutivo asignado al Cliente. 
+            Ítem catálogo catExecutive.
+          example: 24784
+          nullable: true
+        cliCodigo:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        cliCodsuj:
+          type: integer
+          format: int32
+          description: |
+            Código de sujeto imponible, corresponde a un ítem del catálogo 166.
+          example: 1
+          nullable: true
+        cliDigito:
+          type: string
+          description: |
+            Dígito verificador del número de identificación, este campo solo se registra no se valida su información.
+          example: 
+          nullable: true
+        cliExonimp:
+          type: string
+          description: |
+            Identifica si el cliente está exonerado de impuestos. Valores S/N.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no   
+          example: 
+          nullable: true
+        cliFechaing:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de ingreso o creación del cliente.
+          example: "2022/08/09"
+          nullable: true
+        cliFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        cliGrupoeco:
+          type: integer
+          format: int32
+          description: |
+            Código grupo económico al cual pertenece el cliente, corresponde a un ítem del catálogo 30.
+          nullable: true
+        cliIdentifica:
+          type: string
+          description: |
+            Número de identificación 1 del Cliente.
+          example: 125383556
+          nullable: false
+        cliIdentifica2:
+          type: string
+          description: |
+            Número de identificación 2 del Cliente
+          example: 
+          nullable: true
+        cliIdentifica3:
+          type: string
+          description: |
+            Número de identificación 3 del Cliente
+          example: 
+          nullable: true
+        cliIdhacienda:
+          type: string
+          description: |
+            Identificación de hacienda (no aplica)
+          example: 
+          nullable: true
+        cliImpformld:
+          type: string
+          description: |
+            Excento de impresión
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: 
+          nullable: true
+        cliLenguaje:
+          type: integer
+          format: int32
+          description: |
+            Código de lenguaje asociado al cliente, corresponde a un ítem del catálogo 100.
+          example: 1
+          nullable: false
+        cliNivelact:
+          type: integer
+          format: int32
+          description: |
+            Nivel de información ingresada del cliente. Este dato se calcula.
+          nullable: true
+        cliNombre:
+          type: string
+          description: |
+            Nombre completo del cliente.
+          example: PABLO ALEJANDRO ALVARADO PORRAS
+          nullable: false
+        cliNomcorresp:
+          type: string
+          description: |
+            Nombre usual o frecuente del cliente.
+          example: PABLO ALEJANDRO ALVARADO PORRAS
+          nullable: true
+        cliOfiactual:
+          type: integer
+          format: int32
+          description: |
+            No definido en el sistema. No aplica.
+          nullable: true
+        cliOfioriginal:
+          type: integer
+          format: int32
+          description: |
+            No definido en el sistema. No aplica.
+          nullable: true
+        cliPais2:
+          type: integer
+          format: int32
+          description: |
+            Código del país de emisión de la identificación opcional 2 del Cliente, corresponde a un ítem del catálogo 65.
+          example: 
+          nullable: true
+        cliPais3:
+          type: integer
+          format: int32
+          description: |
+            Código del país de emisión de la identificación opcional 3 del Cliente, corresponde a un ítem del catálogo 65.
+          example: 
+          nullable: true
+        cliReferencias:
+          type: string
+          description: |
+            Referencias adicionales del cliente.
+          example: 
+          nullable: true
+        cliRelacionban:
+          type: integer
+          format: int32
+          description: |
+            Relación con el banco, corresponde a un ítem del catálogo 17.
+          example: 3
+          nullable: true
+        cliSegsoc:
+          type: string
+          description: |
+            Nro. de Seguro Social.
+          example: 
+          nullable: true
+        cliStatus:
+          type: string
+          description: |
+            Estado del cliente en FISA System. Activo nulo.
+          example: 
+          nullable: true
+        cliSucactual:
+          type: integer
+          format: int32
+          description: |
+            No definido en el sistema.
+          example: 
+          nullable: true
+        cliSucoriginal:
+          type: integer
+          format: int32
+          description: |
+            No definido en el sistema
+          example: 
+          nullable: true
+        cliTabcatdeudor:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo categoría del deudor.
+          enum: [913]
+          nullable: true
+        cliTabgrupo:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Grupo Económico.
+          enum: [30]
+          nullable: true
+        cliTablenguaje:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Leguages.
+          enum: [100]
+          nullable: true
+        cliTabpais2:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo País 2. Por defecto 65.
+          enum: [65]
+          nullable: true
+        cliTabpais3:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo País 3. Por defecto 65.
+          enum: [65]
+          nullable: true
+        cliTabrel:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo de Vinculación. Por defecto 17.
+          enum: [17]
+          nullable: true
+        cliTabsuj:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Sujeto Imponible. Por defecto 166.
+          enum: [166]
+          nullable: true
+        cliTabtipoper:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo de Persona. Por defecto 57.
+          enum: [57]
+          nullable: true
+        cliTipoid:
+          type: string
+          description: |
+            Tipo de Identificación 1. Ítem del catálogo catTypeId.
+          nullable: false
+        cliTipoid2:
+          type: string
+          description: |
+            Tipo de Identificación 2. Ítem del catálogo catTypeId.
+          nullable: true
+        cliTipoid3:
+          type: string
+          description: |
+            Tipo de Identificación 3. Ítem del catálogo catTypeId.
+          nullable: true
+        cliTipoper:
+          type: integer
+          format: int32
+          description: |
+            Catálogo tipo de persona. Por defecto 57.
+          enum: [57]
+          nullable: false
+        cliUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        cliVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false  
+    OtrTcliPropiedad:
+      type: object
+      description: |
+            Propiedades del Cliente
+      properties:
+        proAvaluo:
+          type: number
+          description: |
+            Valor de avalúo de la propiedad.
+          example: 100000
+          nullable: true
+        proBarrio:
+          type: integer
+          format: int32
+          description: |
+            Código del barrio, corresponde a un ítem del catálogo 66.
+          example: 1004
+          nullable: true
+        proCiudad:
+          type: integer
+          format: int32
+          description: |
+            Código de ciudad , corresponde a un ítem del catálogo 1.
+          example: 508
+          nullable: false
+        proCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        proCodtab:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de propiedad, por defecto 22.
+          enum: [22]
+          nullable: false
+        proComuna:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+        example: 
+          nullable: true
+        proCuotahip:
+          type: number
+          description: |
+            Valor de la cuota de hipoteca.
+          example: 
+          nullable: true
+        proDescripcion:
+          type: string
+          description: |
+            Descripción de la propiedad.
+          example: CASA DE DOS PISOS 15O M2.
+          nullable: true
+        proDireccion1:
+          type: string
+          description: |
+            Dirección de la propiedad
+          example: CALLE SAMANIEGO N24 
+          nullable: true
+        proDireccion2:
+          type: string
+          description: |
+            Dirección de la propiedad
+          example: 
+          nullable: true
+        proDireccion3:
+          type: string
+          description: |
+            Dirección de la propiedad
+          example: 
+          nullable: true
+        proFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        proHipotecador:
+          type: integer
+          format: int32
+          description: |
+            Código de la institucion en la cual está hipotecada la propiedad. Este listado depende del código seleccionado en protabhipoteca.
+          example: 14
+          nullable: true
+        proMoneda:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda en la cual está avaluado el bien.
+            Ítem catálgo catCurrency.
+          example: 2
+          nullable: true
+        proPais:
+          type: integer
+          format: int32
+          description: |
+            Código del país donde se ubica la propiedad, corresponde a un ítem del catálogo 65.
+          example: 160
+          nullable: false
+        proSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial para permitir el registro de una o varias propiedades para un cliente.
+          example: 1
+          nullable: false
+        proTabbarrio:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Barrio, por defecto 66.
+          enum: [66]
+          nullable: true
+        proTabciu:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Ciudad, por defecto 1.
+          enum: [1]
+          nullable: false
+        proTabcomuna:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true
+        proTabhipoteca:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de institucion en la cual se mantiene la hipoteca de la propiedad. Los tipos se obtienen de tgen_tablas para tab_codigo = 10,2,8,3,4.
+          enum: [10, 2, 9, 8, 3, 4] # Valores permitidos: "2"  Bancos  Cod. Super - Iban, "3"  Financieras, "4"  Mutualistas/Asociaciones, "8"  Asociaciones Ahorro-Prest, "9"  Agentes De Bolsa, "10"  Administradoras De Fondos.
+          example: 2
+          nullable: true
+        proTabpais:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo País.
+          enum: [65]
+          nullable: false
+        proTipo:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de propiedad, corresponde a un ítem del catálogo 22.
+          example: 1
+          nullable: false
+        proUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        proVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliProveedores:
+      type: object
+      description: |
+            Principales Proveedore del Cliente Jurídico.
+      properties:
+        prvCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+        prvCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código del cliente proveedor, si es cliente del Banco
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 552
+          nullable: true
+        prvCodmon:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda. 
+            Ítem catálogo catCurrency.
+          example: 0
+          nullable: true
+        prvEmail:
+          type: string
+          description: |
+            Cuenta de correo electrónico.
+          example: proveedor@gmail.com
+          nullable: true
+        prvFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        prvIdentificacion:
+          type: string
+          description: |
+            Identificación del proveedor.
+          example: 78945600
+          nullable: true
+        prvMonto:
+          type: number
+          description: |
+            Monto aproximado de compras.
+          example: 5000000
+          nullable: true
+        prvNombre:
+          type: string
+          description: |
+            Nombre del proveedor.
+          example: JUAN SALVADOR DAVILA BONILLA
+          nullable: false
+        prvPais:
+          type: integer
+          format: int32
+          description: |
+            Código del país de los principales proveedores.
+            Corresponde a un ítem del catálogo 65.
+          example: 160
+          nullable: true
+        prvSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Secuencia de proveedor por cliente.
+          example: 1
+          nullable: false
+        prvTabpais:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo País.
+          enum: [65]
+          nullable: true
+        prvTabtipoper:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo Persona.
+          enum: [57]
+          nullable: true
+        prvTipoid:
+          type: string
+          description: |
+            Tipo de Identificación. 
+            Ítem del catálogo catTypeId.
+          example: C
+          nullable: true
+        prvTipoper:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de persona.
+            Corresponde a un ítem del catálogo 57.
+          example: 1
+          nullable: false
+        prvUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        prvVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliReferencia:
+      type: object
+      description: |
+            Referencias Personales del Cliente natural o jurídico.
+      properties: 
+        crfCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código de las referencias del cliente, que pertenece al Banco.
+          example: 852
+          nullable: true
+        crfCodigo:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        crfEmail:
+          type: string
+          description: |
+            Cuenta de correo electrónico de la referencia.
+          example: refencia@gmail.com
+          nullable: true
+        crfFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        crfLugar:
+          type: string
+          description: |
+            Lugar de trabajo.
+          example: FALABELLA
+          nullable: true
+        crfNombre:
+          type: string
+          description: |
+            Nombre de la Referencia.
+          example: MILTON RAMIREZ
+          nullable: false
+        crfObservacion:
+          type: string
+          description: |
+            Observaciones.
+          example: AMIGO, ADMINISTRADOR / SUPERIOR.
+          nullable: true
+        crfSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Secuencia por referencia del cliente.
+          example: 1
+          nullable: false
+        crfTabtiporef:
+          type: integer
+          format: int32
+          description: |
+            Tabla de referencias, por defecto 170.
+          enum: [170]
+          nullable: false
+        crfTelefono1:
+          type: string
+          description: |
+            Teléfono 1 de contacto.
+          example: 320466302
+          nullable: false
+        crfTelefono2:
+          type: string
+          description: |
+            Teléfono 2 de contacto.
+          example: 989895252
+          nullable: true
+        crfTiporef:
+          type: integer
+          format: int32
+          description: |
+            Tipo de referencias, corresponde a un ítem del catálogo 170
+          nullable: false
+        crfTipotel1:
+          type: string
+          description: |
+            Tipo de teléfono 1.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERIOR.
+          example: T
+          nullable: true
+        crfTipotel2:
+          type: string
+          description: |
+            Tipo de teléfono 2.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERIOR.
+          example: C
+          nullable: true
+        crfUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        crfVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliRefper:
+      type: object
+      description: |
+            Referencias personales del cliente natural.
+      properties:
+        rfmCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: true
+        rfmCodcliref:
+          type: integer
+          format: int32
+          description: |
+            Código del cliente FISA System con el cual se mantiene la relación.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 5258
+          nullable: true
+        rfmCodtab:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo del tipo de relación, por defecto 52.
+          enum: [52]
+          nullable: true
+        rfmRelacion:
+          type: integer
+          format: int32
+          description: |
+            Tipo de relación, corresponde al ítem del catálogo 52.
+          example: 5
+          nullable: true
+        rfmVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no  
+          example: "S"
+          nullable: true
+        rfmFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        rfmUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+    OtrTcliReplegal:
+      type: object
+      description: |
+            Representante Legal del Cliente Jurídico.
+      properties:
+        repCargo: 
+          type: string
+          description: |
+            Cargo del representante legal en la empresa.
+          example: GENERENTE ADMINISTRATIVO
+          nullable: false
+        repCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        repCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código del representante legal, que pertenece al Banco.
+          example: 
+          nullable: true
+        repEmail:
+          type: string
+          description: |
+            Cuenta de correo del representante legal.
+          example: replegal@gmail.com
+          nullable: true
+        repFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        repIdentifica:
+          type: string
+          description: |
+            Identificación del representante legal.
+          example: 789595959
+          nullable: false
+        repNombre:
+          type: string
+          description: |
+            Nombre del representante legal.
+          nullable: false
+        repSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial por cliente del representante legal.
+          example: 1
+          nullable: false
+        repTipoid:
+          type: string
+          description: |
+            Tipo de Identificación. 
+            Ítem del catálogo catTypeId.
+          example: C
+          nullable: false
+        repUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        repVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliSucjur:
+      type: object
+      description: |
+            Sucursales de la Empresa o Cliente Jurídico.
+      properties:
+        semCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        semNumsuc:
+          type: integer
+          format: int32
+          description: |
+            Código de sucursal.
+          example: 3
+          nullable: false
+        semNombre:
+          type: string
+          description: |
+            Nombre de la sucursal.
+          example: PRINCIPAL
+          nullable: false
+        semDireccion:
+          type: integer
+          format: int32
+          description: |
+            Número de dirección de la sucursal.
+          example: 1
+          nullable: false
+        semVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "S"
+          nullable: false
+        semFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información
+          example: "2024/05/30"
+          nullable: false
+        semUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+    OtrTcliTarjcre:
+      type: object
+      description: |
+            Tarjetas de Crédito del Cliente Natural.
+      properties:
+        tarCifras:
+          type: integer
+          format: int32
+          description: |
+            Cifras de manejo.
+            Corresponde a un ítem del catálogo 46.
+          example: 7
+          nullable: true
+        tarCifrasman:
+          type: integer
+          format: int32
+          description: |
+            Número de cifras de manejo.
+          example: 3
+          nullable: true
+        tarCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        tarCodtab:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de tarjeta de crédito, por defecto 21.
+          enum: [21]
+          nullable: false
+        tarFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        tarInstitucion:
+          type: integer
+          format: int32
+          description: |
+            Institución a la cual pertenece la tarjeta de crédito.
+            Corresponde a un ítem del catálogo 5.
+          example: 33
+          nullable: false
+        tarMoneda:
+          type: integer
+          format: int32
+          description: |
+            Moneda en la cual opera la tarjeta de crédito. 
+            Ítem del catálogo catCurrency.
+          example: 0
+          nullable: false
+        tarNumero:
+          type: string
+          description: |
+            Número de la tarjeta de crédito.
+          example: 4500858523239595
+          nullable: false
+        tarObserva:
+          type: string
+          description: |
+            Observaciones adicionales.
+          example: USUARIO DE LA TARJETA DESDE 2005
+          nullable: true
+        tarSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial para facilitar el registro de varias tarjetas de crédito para un mismo cliente.
+          example: 1
+          nullable: false
+        tarTabcif:
+          type: integer
+          format: int32
+          description: |
+            Código de acuerdo al número de cifras de manejo, por defecto 46.
+          enum: [46]
+          nullable: true
+        tarTabins:
+          type: integer
+          format: int32
+          description: |
+            Código de la institución a la cual pertenece la tarjeta de crédito, por defecto 5.
+          enum: [5]
+          nullable: false
+        tarTipo:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de tarjeta de crédito.
+            Corresponde a un ítem del catálogo 21.
+          example: 7
+          nullable: false
+        tarUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        tarVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliTelefono:
+      type: object
+      description: |
+            Teléfonos del cliente natural o jurídico.
+      properties:
+        telCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        telExtension:
+          type: integer
+          format: int32
+          description: |
+            Número de extensión telefónica.
+          example: 6001
+          nullable: true
+        telFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        telNumdir:
+          type: integer
+          format: int32
+          description: |
+            Número de dirección a la cual corresponde el número telefónico.
+            Permite relacionar el número telefónico con la dirección.
+          example: 1
+          nullable: false
+        telTelefono:
+          type: string
+          description: |
+            Número de teléfono.
+          example: 323334444
+          nullable: false
+        telTipo:
+          type: string
+          description: |
+            Tipo de teléfono.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERI.
+          example: T
+          nullable: false
+        telUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        telVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliTrabajo:
+      type: object
+      description: |
+            Información laboral del cliente natural.
+      properties:
+        traActemp:
+          type: integer
+          format: int32
+          description: |
+            Actividad de la empresa donde labora el cliente, corresponde a un ítem del catálogo 19.
+          example: 3057
+          nullable: true
+        traCargoact:
+          type: string
+          description: |
+            Cargo o posición actual.
+          example: COMP. Y VENT. PRODUCTOS AGRICO
+          nullable: false
+        traCiudad:
+          type: integer
+          format: int32
+          description: |
+            Código de la ciudad donde trabaja el cliente, corresponde a un ítem del catálogo 1.
+          example: 160
+          nullable: true
+        traCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        traComuna:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true
+        traContrab:
+          type: integer
+          format: int32
+          description: |
+            Código del contrato de trabajo.
+          example:   
+          nullable: true
+        traDirempant:
+          type: string
+          description: |
+            Dirección de la empresa anterior (última) donde laboró.
+          example: Baquedano 2, Puerto Varas, Los Lagos, Chile.
+          nullable: true
+        traEmpant:
+          type: string
+          description: |
+            Empresa anterior de trabajo (última).
+          example: BURBUJAS DEL CARIBE
+          nullable: true
+        traEmpleador:
+          type: integer
+          format: int32
+          description: |
+            Código del empleador, registrado en la transacción 2/6026.
+            Ítem del catálogo catEmployer.
+          example: 1
+          nullable: true
+        traFechaing:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de ingreso del cliente a la empresa donde trabaja.
+          example: "2015/08/07"
+          nullable: true
+        traFecingant:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de ingreso empleo nterior.
+          example: "2020/01/05"
+          nullable: false
+        traFecsalant:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de salida empleo anterior
+          example: "2015/08/06"
+          nullable: true
+        traFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        traIdemp:
+          type: string
+          description: |
+            Identificación del cliente.
+          example: 764606322
+          nullable: true
+        traNomemp:
+          type: string
+          description: |
+            Empresa en la cual actualmente labora.
+          example: TRABAJO INDEPENDIENTE
+          nullable: false
+        traNumdir:
+          type: integer
+          format: int32
+          description: |
+            Número de dirección.
+          example: 2
+          nullable: true
+        traUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        traVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliVehiculo:
+      type: object
+      description: |
+            Vehículos del cliente natural.
+      properties:
+        vehAnio:
+          type: integer
+          format: int32
+          description: |
+            Año de fabricación.
+          example: 2022
+          nullable: false
+        vehAvaluo:
+          type: number
+          description: |
+            Valor de avalúo.
+          example: 25000000
+          nullable: false
+        vehCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        vehCuotapre:
+          type: number
+          description: |
+            Valor de cuota de la prenda del vehículo.
+          example: 312000
+          nullable: true
+        vehFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        vehMarca:
+          type: string
+          description: |
+            Marca del vehículo.
+          example: TOYOTA
+          nullable: false
+        vehModelo:
+          type: string
+          description: |
+            Modelo de vehículo.
+          example: COROLLA CROSS
+          nullable: true                                    
+        vehMoneda:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda, corresponde a un ítem del catálogo catCurrency.
+          example: 0
+          nullable: false
+        vehPrendador:
+          type: string
+          description: |
+            Registra el nombre del prendador del vehículo, en caso de existir.
+          example: MAF CHILE
+          nullable: true
+        vehSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Número secuencial, para registrar más de un vehículo relacionado al cliente.
+          example: 1
+          nullable: false
+        vehUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        vehVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrTcliVivienda:
+      type: object
+      description: |
+            Arrendador de la Vivienda del Cliente Natural.
+      properties:
+        vivCodcli:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        vivCodclibank:
+          type: integer
+          format: int32
+          description: |
+            Código del cliente arrendador, que pertenece a la institución financiera.
+            Corresponde al catágo catClient.
+          example: 777
+          nullable: true
+        vivEmail:
+          type: string
+          description: |
+            Cuenta de correo electrónico.
+          example: arrendador@gmail.com
+          nullable: true
+        vivFecharren:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de arrendamiento-
+          example: "2025/01/10"
+          nullable: true
+        vivFecver:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de verificación de esta información.
+          example: "2024/05/30"
+          nullable: false
+        vivNomarren:
+          type: string
+          description: |
+            Nombre del propietario de la vivienda. 
+          example: JUAN PEREZ DAVILA
+          nullable: true
+        vivTelfarren:
+          type: string
+          description: |
+            Teléfono del arrendamiento.
+          example: 3046630202
+          nullable: true
+        vivTipotel:
+          type: string
+          description: |
+            Tipo de teléfono.
+          enum: [F, T, C, E] # Valores permitidos: F-FAX, T-TELEFONO, C-TELEF. CELULAR, E-TELEFONO EXTERIOR.
+          example: T
+          nullable: true
+        vivUsrver:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que realizó la verificación de los datos.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157 
+          nullable: false
+        vivVerifica:
+          type: string
+          description: |
+            Marca si los datos de esta tabla han sido verificados.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          example: "S"
+          nullable: false
+    OtrWarnigs:
+      type: object
+      description: |
+            Lista de mensajes de alerta.
+      properties: 
+        message:
+          type: string
+          description: |
+            Campo texto del mensaje de alerta.
+    ClientPutcliidOut:
+      type: object
+      description: |
+            Información del cliente actualizada.
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object            
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            ptbPersona:
+              $ref: '#/components/schemas/OtrTcliPersona'
+            ptbDireccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDireccion'
+            ptbTelefono:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTelefono'
+            ptbNatural:
+              $ref: '#/components/schemas/OtrTcliNatural'
+            ptbFamiliar:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliFamiliar'
+            ptbReferencia:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReferencia'
+            ptbTrabajo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTrabajo'
+            ptbIngreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliIngreso'
+            ptbEgreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEgreso'
+            ptbCtaref:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliCtaref'
+            ptbInversion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliInversion'
+            ptbTarjcre:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTarjcre'
+            ptbPropiedad:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliPropiedad'
+            ptbVehiculo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliVehiculo'
+            ptbJuridica:
+              $ref: '#/components/schemas/OtrTcliJuridica'
+            ptbSucjur:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliSucjur'
+            ptbDsadmin:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDsadmin'
+            ptbReplegal:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReplegal'
+            ptbProveedores:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliProveedores'
+            ptbClientes:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliClientes'
+            ptbEmpresa:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEmpresa'
+            ptbDocumento:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDocumento'
+            ptbRefper:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliRefper'
+            ptbDependiente:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDependiente'
+            ptbApoderado:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliApoderado'
+            prbVivienda:
+              $ref: '#/components/schemas/OtrTcliVivienda'
+            prbMilitar:
+              $ref: '#/components/schemas/OtrTcliMilitar'
+            ptbParticipacion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliParticipacion'
+            pcbAction:
+              type: string
+              description: |
+                Actualiza Información del Cliente.
+              enum: [2]        
+            ptbMessagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+              description: |
+                Lista de mensajes que se han presentando durante la ejecución del servicio.
+            pnbResponse:
+              type: number
+              description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+    ClientPostcliIn:
+      type: object
+      description: |
+            Información del cliente a crear.
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object            
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            pniCodcli:
+              type: number
+              description: |
+                Código cliente FISA System.
+                Registrado en la transacción 2/2.
+                Ítem catálogo catClient.
+              example: 84875
+              nullable: true
+            pciTipoid:
+              type: string
+              description: |
+                Tipo de Identificación. 
+                Ítem del catálogo catTypeId.
+              example: C
+              nullable: false
+            pciIdentifica:
+              type: string
+              description: |
+                Número de identificación principal del cliente.
+              example: 104111111 
+              nullable: false
+            ptbPersona:
+              $ref: '#/components/schemas/OtrTcliPersona'
+            ptbDireccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDireccion'
+            ptbTelefono:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTelefono'
+            ptbNatural:
+              $ref: '#/components/schemas/OtrTcliNatural'
+            ptbFamiliar:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliFamiliar'
+            ptbReferencia:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReferencia'
+            ptbTrabajo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTrabajo'
+            ptbIngreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliIngreso'
+            ptbEgreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEgreso'
+            ptbCtaref:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliCtaref'
+            ptbInversion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliInversion'
+            ptbTarjcre:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTarjcre'
+            ptbPropiedad:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliPropiedad'
+            ptbVehiculo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliVehiculo'
+            ptbJuridica:
+              $ref: '#/components/schemas/OtrTcliJuridica'
+            ptbSucjur:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliSucjur'
+            ptbDsadmin:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDsadmin'
+            ptbReplegal:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReplegal'
+            ptbProveedores:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliProveedores'
+            ptbClientes:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliClientes'
+            ptbEmpresa:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEmpresa'
+            ptbDocumento:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDocumento'
+            ptbRefper:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliRefper'
+            ptbDependiente:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDependiente'
+            ptbApoderado:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliApoderado'
+            prbVivienda:
+              $ref: '#/components/schemas/OtrTcliVivienda'
+            prbMilitar:
+              $ref: '#/components/schemas/OtrTcliMilitar'
+            ptbParticipacion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliParticipacion'
+            pcbAction:
+              type: string
+              description: |
+                Crea cliente. Valor fijo 1.
+              example: 1
+            ptbMessagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+              description: |
+                Lista de mensajes que se han presentando durante la ejecución del servicio.
+    ClientPostcliOut:
+      type: object
+      description: |
+            Información del cliente creado.
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object               
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            ptbPersona:
+              $ref: '#/components/schemas/OtrTcliPersona'
+            ptbDireccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDireccion'
+            ptbTelefono:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTelefono'
+            ptbNatural:
+              $ref: '#/components/schemas/OtrTcliNatural'
+            ptbFamiliar:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliFamiliar'
+            ptbReferencia:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReferencia'
+            ptbTrabajo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTrabajo'
+            ptbIngreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliIngreso'
+            ptbEgreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEgreso'
+            ptbCtaref:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliCtaref'
+            ptbInversion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliInversion'
+            ptbTarjcre:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTarjcre'
+            ptbPropiedad:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliPropiedad'
+            ptbVehiculo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliVehiculo'
+            ptbJuridica:
+              $ref: '#/components/schemas/OtrTcliJuridica'
+            ptbSucjur:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliSucjur'
+            ptbDsadmin:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDsadmin'
+            ptbReplegal:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReplegal'
+            ptbProveedores:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliProveedores'
+            ptbClientes:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliClientes'
+            ptbEmpresa:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEmpresa'
+            ptbDocumento:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDocumento'
+            ptbRefper:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliRefper'
+            ptbDependiente:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDependiente'
+            ptbApoderado:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliApoderado'
+            prbVivienda:
+              $ref: '#/components/schemas/OtrTcliVivienda'
+            prbMilitar:
+              $ref: '#/components/schemas/OtrTcliMilitar'
+            ptbParticipacion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliParticipacion'
+            pcbAction:
+              type: string
+              description: |
+                Crea cliente. 
+                Valor fijo 1.
+              example: 1         
+            ptbMessagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+              description: |
+                Detalle de mensajes que se presentan al ejecutar el servicio.
+            pnbResponse:
+              type: number
+              description: |
+                Resultado del proceso.Valores "0" - error, "null" - OK.
+    ClientGetcliidIn:
+      type: object
+      description: |
+            Cliente a consultar.
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object            
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            pniCodcli:
+              type: number
+              description: |
+                Código cliente FISA System.
+                Registrado en la transacción 2/2.
+                Ítem catálogo catClient.
+              example: 84875
+              nullable: true
+            pciTipoid:
+              type: string
+              description: |
+                Tipo de Identificación. 
+                Ítem del catálogo catTypeId.
+              example: C
+              nullable: false
+            pciIdentifica:
+              type: string
+              description: |
+                Número de identificación principal del cliente
+              example: 104111111  
+              nullable: false
+            ptbPersona:
+              $ref: '#/components/schemas/OtrTcliPersona'
+            ptbDireccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDireccion'
+            ptbTelefono:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTelefono'
+            ptbNatural:
+              $ref: '#/components/schemas/OtrTcliNatural'
+            ptbFamiliar:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliFamiliar'
+            ptbReferencia:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReferencia'
+            ptbTrabajo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTrabajo'
+            ptbIngreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliIngreso'
+            ptbEgreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEgreso'
+            ptbCtaref:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliCtaref'
+            ptbInversion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliInversion'
+            ptbTarjcre:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTarjcre'
+            ptbPropiedad:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliPropiedad'
+            ptbVehiculo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliVehiculo'
+            ptbJuridica:
+              $ref: '#/components/schemas/OtrTcliJuridica'
+            ptbSucjur:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliSucjur'
+            ptbDsadmin:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDsadmin'
+            ptbReplegal:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReplegal'
+            ptbProveedores:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliProveedores'
+            ptbClientes:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliClientes'
+            ptbEmpresa:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEmpresa'
+            ptbDocumento:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDocumento'
+            ptbRefper:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliRefper'
+            ptbDependiente:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDependiente'
+            ptbApoderado:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliApoderado'
+            prbVivienda:
+              $ref: '#/components/schemas/OtrTcliVivienda'
+            prbMilitar:
+              $ref: '#/components/schemas/OtrTcliMilitar'
+            ptbParticipacion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliParticipacion'
+            pcbAction:
+              type: string
+              description: |
+                Consulta Información del cliente. 
+                Valor fijo 3.
+              example: 3
+            ptbMessagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+              description: |
+                Lista de mensajes que se han presentando durante la ejecución del servicio.
+    ClientGetcliidOut:
+      description: |
+            Información del cliente consultado.
+      type: object
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object            
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            ptbPersona:
+              $ref: '#/components/schemas/OtrTcliPersona'
+            ptbDireccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDireccion'
+            ptbTelefono:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTelefono'
+            ptbNatural:
+              $ref: '#/components/schemas/OtrTcliNatural'
+            ptbFamiliar:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliFamiliar'
+            ptbReferencia:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReferencia'
+            ptbTrabajo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTrabajo'
+            ptbIngreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliIngreso'
+            ptbEgreso:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEgreso'
+            ptbCtaref:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliCtaref'
+            ptbInversion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliInversion'
+            ptbTarjcre:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliTarjcre'
+            ptbPropiedad:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliPropiedad'
+            ptbVehiculo:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliVehiculo'
+            ptbJuridica:
+              $ref: '#/components/schemas/OtrTcliJuridica'
+            ptbSucjur:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliSucjur'
+            ptbDsadmin:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDsadmin'
+            ptbReplegal:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliReplegal'
+            ptbProveedores:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliProveedores'
+            ptbClientes:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliClientes'
+            ptbEmpresa:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliEmpresa'
+            ptbDocumento:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDocumento'
+            ptbRefper:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliRefper'
+            ptbDependiente:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliDependiente'
+            ptbApoderado:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliApoderado'
+            prbVivienda:
+              $ref: '#/components/schemas/OtrTcliVivienda'
+            prbMilitar:
+              $ref: '#/components/schemas/OtrTcliMilitar'
+            ptbParticipacion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliParticipacion'
+            pcbAction:
+              type: string
+            ptbMessagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+              description: |
+                Lista de mensajes que se han presentando durante la ejecución del servicio.
+            pnbResponse:
+              type: number
+              description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+            
+
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    X-ConversationId:
+      description: |
+        Identificador único de la conversación del servicio.
+
+        Por cada servicio que interviene en la orquestación se tiene un id de conversación.
+
+      example: "59491c7e-ad88-49ec-a2ad-99ddcb1f5674"
+
+      type: string
+      format: uuid
+
+    X-ChannelId:
+      description: |
+        Id del canal desde el cual se se está invocando el servicio. 
+        Ítem de catálogo 139.
+
+        Ej. de osibles Valores:
+           "2"    BOTON PAGO
+           "3"    CAJA EXPRESS
+           "5"    CAJA EXTERNA
+      type: string
+      maxLength: 50
+      example: "2"
+      
+    X-CarDealerId:
+      description: |
+        Código del concesionario (Sucursal FISA System) desde donde se está generando el proceso de originación
+
+        Representa el código único asignado a la compañia con la cual se trabajar
+      example: 3
+      type: string
+      minLength: 0
+      maxLength: 20
+
+    X-UserId:
+      description: |
+        Código del usuario FISA System que está realizando el proceso
+        Registrado en la transacción 1/9.
+        Ítem catálogo catUser.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-SellerId:
+      description: |
+        Código del vendedor desde donde se está generando el proceso de originación
+        No definido en FISA System.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-BranchId:
+      description: |
+        Código de la sucursal FISA System desde cual se ejecuta la acción.
+        Registrada en la transacción 1/2.
+        Ítem catálogo catBranch.
+      example: 2
+      type: integer
+      format: int64
+
+    X-OfficeId:
+      description: |
+        Código de la oficina FISA System desde cual se ejecuta la acción.
+        Ítem catálogo catOffice.
+        Relacionada con la sucursal indicada en "branchid". 
+        Registrada en la transacción 1/2.
+      example: 1
+      type: integer
+      format: int64
+      
+    X-EnterpriseCode:
+      description: |
+        Código del Empresa o institución que invoca el servicio
+        No definido en FISA System.
+
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: MAF
+      
+    X-SysCode:
+      description: |
+        Código del Sistema que invoca el servicio.
+        No definido en FISA System.
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: SISCRED
+      
+    ######## FIN INFORMACION INYECCION SOLICITUD ORIGINACION
+
+    Info:
+      description: |
+        Información de cabecera requerida en los servicios como parte del mensaje
+      type: object
+      properties:
+        Consumer:
+          description: |
+            Información del consumidor del servicio
+          type: object
+          properties:
+            sysCode:
+              $ref: "#/components/schemas/X-SysCode"
+            enterpriseCode:
+              $ref: '#/components/schemas/X-EnterpriseCode'
+        Trace:
+          description: |
+            Información para seguimiento del servicio
+          type: object
+          required:
+            - userId
+            - carDealerId
+            - branchId
+            - officeId
+          properties:
+            conversationId:
+              $ref: '#/components/schemas/X-ConversationId'
+            userId:
+              $ref: '#/components/schemas/X-UserId'
+            carDealerId:
+              $ref: '#/components/schemas/X-CarDealerId'
+            sellerId:
+              $ref: '#/components/schemas/X-SellerId'
+            branchId:
+              $ref: '#/components/schemas/X-BranchId'
+            officeId:
+              $ref: '#/components/schemas/X-OfficeId'
+            channelId:
+              $ref: '#/components/schemas/X-ChannelId'
+
+    Result:
+      description: |
+        Resultado de la invocación al servicio
+      type: object
+      required:
+        - status
+        - description
+      properties:
+        status:
+          description: |
+            Estado de la ejecución del servicio
+
+            Los posible valores que puede tener este campo son:
+            - SUCCESS
+            - ERROR
+          type: string
+          enum:
+            - SUCESSS
+            - ERROR
+        description:
+          description: |
+            Descripción del resultado de la invocación al servicio.
+            Puede ser algún texto indicando el resultado
+          type: string
+
+        SourceError:
+          description: |
+            Información en caso de error presentado en el servicio invocado
+          type: object
+          properties:
+            code:
+              description: Código de error devuelto
+              type: string
+            description:
+              description: |
+                Descripción del error devuelto por el servicio invocado
+              type: string
+              
+    ReqHeader:
+      description: |
+        Cabecera para la invocación del servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+
+    RspHeader:
+      description: |
+        Cabecera de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+        Result:
+
+          $ref: '#/components/schemas/Result'
+          
+    ReqMessage:
+      description: |
+        Mensaje para invocación de servicios
+      type: object
+      properties:
+        ReqHeader:
+          $ref: '#/components/schemas/ReqHeader'
+
+    RspMessage:
+      description: |
+        Mensaje de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        RspHeader:
+          $ref: '#/components/schemas/RspHeader'
+
+
+        
+
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
+
+    errorTitle:
+      description: |
+        Descripcion corta leible por humanos del tipo de error. Puede estar en lenguaje local.
+      type: string
+      minLength: 0
+      maxLength: 70
+
+    errorDetail:
+      description: |
+        Texto detallado específico leible por humanos de esta instancia de error.
+
+        Además XPath puede se usado para apuntar a la novedad que está generando el error
+
+      type: string
+      minLength: 0
+      maxLength: 500
+
+    MessageCode400:
+      description: Códigos de mensajes definidos para código de error HTTP 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - FORMAT_ERROR              #gen
+        - PARAMETER_NOT_CONSISTENT  #gen
+        - PARAMETER_NOT_SUPPORTED   #gen
+        - SERVICE_INVALID           #gen
+        - RESOURCE_UNKNOWN          #gen
+        - RESOURCE_EXPIRED          #gen
+        - RESOURCE_BLOCKED          #gen
+        - TIMESTAMP_INVALID         #gen
+        - PERIOD_INVALID            #gen
+        - SCA_METHOD_UNKNOWN        #gen
+        - SCA_INVALID               #gen
+        - CONSENT_UNKNOWN           #gen
+        
+    Error400:
+      description: |
+        Definición estandarizada para reportar información de errores acorde a [RFC7807] en caso de códigos HTTP 400.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            Una referencia URI [RFC3986] que identifica el tipo de problema.
+          type: string
+          format: uri
+          minLength: 0
+          maxLength: 70
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        code:
+          $ref: "#/components/schemas/MessageCode400"
+        additionalErrors:
+          description: |
+            Lista de bloques de información de Error.
+
+            Puede ser usado si mas de un error va a ser comunicado
+          type: array
+          items: #ErrorInformation
+            description: Este es el elemento de datos para soportar la declaración de errores adicionales en el contexto de [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/errorTitle"
+              detail:
+                $ref: "#/components/schemas/errorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400"
+                
+  responses:
+    #################################
+    # Respuestas Afirmativas
+    #################################
+
+    OK_200_ClientPutcliid:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientPutcliidOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/clientPutExample"            
+
+    OK_200_ClientPostcliid:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientPostcliOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/clientPostExample"            
+
+    OK_200_ClientGettcliid:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientGetcliidOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/clientGetExample"            
+    
+    
+    #################################
+    # Respuestas negativas
+    #################################
+
+    BAD_REQUEST_400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400"
+
+    UNAUTHORIZED_401:
+      description: Error de autenticación
+
+    FORBIDDEN_403:
+      description: Forbidden
+
+    INTERNAL_SERVER_ERROR_500:
+      description: Internal Server Error            
+
+
+  examples:
+    clientPutExample:
+      summary: Actualiza información de cliente existente
+      description: Actualiza información de cliente natural existente
+      value: {}
+    clientPostExample:
+      summary: Crea cliente jurídico nuevo
+      value: {}
+    clientGetExample:
+      summary: Consulta información de cliente existente
+      description: Consulta información de cliente natural existente
+      value: {}
+      

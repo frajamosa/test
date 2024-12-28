@@ -1,0 +1,722 @@
+openapi: 3.0.1
+info:
+  title: API - Funcionalidades Catálogos FISA System
+  description: "
+  # Permite obtener:
+  
+      * Detalle de los ítems de un catálogo en particular, como la 
+      
+      * Información de un ítem en particular.
+        
+  # Los catálogos se identifican por:  
+  
+        * Un código numérico.
+         Ejemplo: *40* 
+         Corresponde al catálogo de **DEPARTAMENTO** 
+         Registrado en FISA System en la transacción 1/1 TABLAS INTERNAS DEL SISTEMA,
+        
+          o
+          
+        
+        * Un código texto.
+          Ejemplo: *catUser*
+          Corresponde al catálogo de **USUARIOS** 
+          Registrado en la transacción 1/9 DATOS USUARIOS en FISA System.
+  "
+  version: 1.0.0-SNAPSHOT
+servers:
+  - url: http://localhost:9081
+    description: Generated server url
+paths:
+  /catalogue/getItem/request/{catalogId}/{itemId}:
+    post:
+      tags:
+        - catalogue-rest-controller
+      summary: Obtener la descripción de un ítem del catálogo
+      operationId: getItem
+
+      parameters:
+        - $ref: "#/components/parameters/catalogId"
+        - $ref: "#/components/parameters/itemId"
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogueGetItemIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_GetItem'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                        
+          
+  /catalogue/getCatalogue/request/{catalogId}:
+    post:
+      tags:
+        - catalogue-rest-controller
+      summary: Obtener ítems del catálogo
+      operationId: getCatalogue
+      parameters:
+        - $ref: "#/components/parameters/catalogId"      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalAtalogueIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_GetCatalogue'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                                  
+components:
+  headers:
+    #####################################################
+    # Reusable Response Header Elements
+    #####################################################
+
+    tokenmcm:
+      schema:
+        type: string
+
+    Location:
+      description: |
+        Localización del recurso creado.
+      schema:
+        type: string
+        format: url
+      required: false
+
+  parameters:
+    #####################################################
+    # Predefined Parameters
+    #####################################################
+    catalogId:
+      name: catalogId
+      in: path
+      description: |
+        Código catálogo a consultar
+        * 65 
+        * catCurrency
+      required: true
+      schema:
+          type: string
+          
+    itemId:
+      name: itemId
+      in: path
+      description: |
+        Código ítem catálogo a consultar.
+        * 0
+      required: true
+      schema:
+          type: number
+          
+  schemas:
+    CatalogueGetItemIn:
+      type: object
+      description: |
+        Obtener descripción de un ítem del catálogo.
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object        
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            catalogueitem:
+              $ref: '#/components/schemas/OtrCatalogueitem'
+    OtrCatalogueitem:
+      type: object
+      description: |
+        Información del ítem de un catálogo.
+      properties:
+        catalogueid:
+          type: string
+          description: |
+            Código catálogo.
+            De acuerdo con la descripción de cada campo, el código puede ser un:
+              Número - ejemplo: 40, o
+              Texto  - ejemplo: catUser
+          example: 40  
+          nullable: false
+        itemid:
+          type: integer
+          format: int32
+          description: |
+            Código ítem catálogo.
+          example: 6  
+          nullable: false
+        itemdecription1:
+          type: string
+          description: |
+            Descripción ítem catálogue
+          example: CREDITO
+          nullable: true
+        status:
+          type: string
+          description: |
+            Estado del ítem. A-activo, Null no activo.
+          example: A
+          nullable: true
+        altercode1:
+          type: string
+          description: |
+            Código alterno 1.
+          example: 
+          nullable: true
+        altercode2:
+          type: string
+          description: |
+            Código alterno 2.
+          example:
+          nullable: true
+        altercode3:
+          type: string
+          description: |
+            Código alterno 3.
+          example:
+          nullable: true
+    CatalogueGetItemOut:
+      type: object
+      description: |
+        Resultado de obtener descripción de un ítem del catálogo.
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object         
+          properties:
+            catalogueitem:
+              $ref: '#/components/schemas/OtrCatalogueitem'
+            messagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+              example:
+    OtrWarnigs:
+      type: object
+      description: |
+            Detalle de mensajes presentados durante la ejecución del servicio.
+      properties:
+        message:
+          type: string
+          description: |
+            Texto del mensaje.
+    CatalAtalogueIn:
+      type: object
+      description: |
+            Obtener ítems del catálogo.
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object            
+          properties:
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            catalogue:
+              $ref: '#/components/schemas/OtrCatalogue'
+    OtrCatalogue:
+      type: object
+      description: |
+            Ítems del catálogo.
+      properties:
+        catalogueid:
+          type: string
+          description: |
+            Código catálogo
+          example: 40
+          nullable: false
+        cataloguename:
+          type: string
+          description: |
+            Nombre catálogo.
+          example: DEPARTAMENTOS
+          nullable: false
+    CatalAtalogueOut:
+      type: object
+      description: |
+            Resultado de obtener ítems del catálogo.
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object             
+          properties:
+            catalogue:
+              $ref: '#/components/schemas/OtrCatalogue'
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrCatalogueitem'
+            messagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    X-ConversationId:
+      description: |
+        Identificador único de la conversación del servicio.
+
+        Por cada servicio que interviene en la orquestación se tiene un id de conversación.
+
+      example: "59491c7e-ad88-49ec-a2ad-99ddcb1f5674"
+
+      type: string
+      format: uuid
+
+    X-ChannelId:
+      description: |
+        Id del canal desde el cual se se está invocando el servicio. 
+        Ítem de catálogo 139.
+
+        Ej. de osibles Valores:
+           "2"    BOTON PAGO
+           "3"    CAJA EXPRESS
+           "5"    CAJA EXTERNA
+      type: string
+      maxLength: 50
+      example: "2"
+      
+    X-CarDealerId:
+      description: |
+        Código del concesionario (Sucursal FISA System) desde donde se está generando el proceso de originación
+
+        Representa el código único asignado a la compañia con la cual se trabajar
+      example: 3
+      type: string
+      minLength: 0
+      maxLength: 20
+
+    X-UserId:
+      description: |
+        Código del usuario FISA System que está realizando el proceso
+        Registrado en la transacción 1/9.
+        Ítem catálogo catUser.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-SellerId:
+      description: |
+        Código del vendedor desde donde se está generando el proceso de originación
+        No definido en FISA System.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-BranchId:
+      description: |
+        Código de la sucursal FISA System desde cual se ejecuta la acción.
+        Registrada en la transacción 1/2.
+        Ítem catálogo catBranch.
+      example: 2
+      type: integer
+      format: int64
+
+    X-OfficeId:
+      description: |
+        Código de la oficina FISA System desde cual se ejecuta la acción.
+        Ítem catálogo catOffice.
+        Relacionada con la sucursal indicada en "branchid". 
+        Registrada en la transacción 1/2.
+      example: 1
+      type: integer
+      format: int64
+      
+    X-EnterpriseCode:
+      description: |
+        Código del Empresa o institución que invoca el servicio
+        No definido en FISA System.
+
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: MAF
+      
+    X-SysCode:
+      description: |
+        Código del Sistema que invoca el servicio.
+        No definido en FISA System.
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: SISCRED
+      
+    ######## FIN INFORMACION INYECCION SOLICITUD ORIGINACION
+
+    Info:
+      description: |
+        Información de cabecera requerida en los servicios como parte del mensaje
+      type: object
+      properties:
+        Consumer:
+          description: |
+            Información del consumidor del servicio
+          type: object
+          properties:
+            sysCode:
+              $ref: "#/components/schemas/X-SysCode"
+            enterpriseCode:
+              $ref: '#/components/schemas/X-EnterpriseCode'
+        Trace:
+          description: |
+            Información para seguimiento del servicio
+          type: object
+          required:
+            - userId
+            - carDealerId
+            - branchId
+            - officeId
+          properties:
+            conversationId:
+              $ref: '#/components/schemas/X-ConversationId'
+            userId:
+              $ref: '#/components/schemas/X-UserId'
+            carDealerId:
+              $ref: '#/components/schemas/X-CarDealerId'
+            sellerId:
+              $ref: '#/components/schemas/X-SellerId'
+            branchId:
+              $ref: '#/components/schemas/X-BranchId'
+            officeId:
+              $ref: '#/components/schemas/X-OfficeId'
+            channelId:
+              $ref: '#/components/schemas/X-ChannelId'
+
+    Result:
+      description: |
+        Resultado de la invocación al servicio
+      type: object
+      required:
+        - status
+        - description
+      properties:
+        status:
+          description: |
+            Estado de la ejecución del servicio
+
+            Los posible valores que puede tener este campo son:
+            - SUCCESS
+            - ERROR
+          type: string
+          enum:
+            - SUCESSS
+            - ERROR
+        description:
+          description: |
+            Descripción del resultado de la invocación al servicio.
+            Puede ser algún texto indicando el resultado
+          type: string
+
+        SourceError:
+          description: |
+            Información en caso de error presentado en el servicio invocado
+          type: object
+          properties:
+            code:
+              description: Código de error devuelto
+              type: string
+            description:
+              description: |
+                Descripción del error devuelto por el servicio invocado
+              type: string
+              
+    ReqHeader:
+      description: |
+        Cabecera para la invocación del servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+
+    RspHeader:
+      description: |
+        Cabecera de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+        Result:
+
+          $ref: '#/components/schemas/Result'
+          
+    ReqMessage:
+      description: |
+        Mensaje para invocación de servicios
+      type: object
+      properties:
+        ReqHeader:
+          $ref: '#/components/schemas/ReqHeader'
+
+    RspMessage:
+      description: |
+        Mensaje de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        RspHeader:
+          $ref: '#/components/schemas/RspHeader'
+
+
+        
+
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
+
+    errorTitle:
+      description: |
+        Descripcion corta leible por humanos del tipo de error. Puede estar en lenguaje local.
+      type: string
+      minLength: 0
+      maxLength: 70
+
+    errorDetail:
+      description: |
+        Texto detallado específico leible por humanos de esta instancia de error.
+
+        Además XPath puede se usado para apuntar a la novedad que está generando el error
+
+      type: string
+      minLength: 0
+      maxLength: 500
+
+    MessageCode400:
+      description: Códigos de mensajes definidos para código de error HTTP 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - FORMAT_ERROR              #gen
+        - PARAMETER_NOT_CONSISTENT  #gen
+        - PARAMETER_NOT_SUPPORTED   #gen
+        - SERVICE_INVALID           #gen
+        - RESOURCE_UNKNOWN          #gen
+        - RESOURCE_EXPIRED          #gen
+        - RESOURCE_BLOCKED          #gen
+        - TIMESTAMP_INVALID         #gen
+        - PERIOD_INVALID            #gen
+        - SCA_METHOD_UNKNOWN        #gen
+        - SCA_INVALID               #gen
+        - CONSENT_UNKNOWN           #gen
+        
+    Error400:
+      description: |
+        Definición estandarizada para reportar información de errores acorde a [RFC7807] en caso de códigos HTTP 400.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            Una referencia URI [RFC3986] que identifica el tipo de problema.
+          type: string
+          format: uri
+          minLength: 0
+          maxLength: 70
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        code:
+          $ref: "#/components/schemas/MessageCode400"
+        additionalErrors:
+          description: |
+            Lista de bloques de información de Error.
+
+            Puede ser usado si mas de un error va a ser comunicado
+          type: array
+          items: #ErrorInformation
+            description: Este es el elemento de datos para soportar la declaración de errores adicionales en el contexto de [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/errorTitle"
+              detail:
+                $ref: "#/components/schemas/errorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400"
+                
+  responses:
+    #################################
+    # Respuestas Afirmativas
+    #################################
+
+    OK_200_GetItem:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CatalogueGetItemOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/getItemExample"        
+          
+
+    OK_200_GetCatalogue:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CatalAtalogueOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/getCatalogueExample"            
+
+                  
+    
+    
+    #################################
+    # Respuestas negativas
+    #################################
+
+    BAD_REQUEST_400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400"
+
+    UNAUTHORIZED_401:
+      description: Error de autenticación
+
+    FORBIDDEN_403:
+      description: Forbidden
+
+    INTERNAL_SERVER_ERROR_500:
+      description: Internal Server Error            
+
+
+  examples:
+    getItemExample:
+      summary: Obtiene descripción de un ítem del catálogo
+      description: Obtiene descripción de un ítem del catálogo
+      value: {}
+    getCatalogueExample:
+      summary: Obtiene ítems de un catálogo
+      description: Obtiene ítems de un catálogo
+      value: {}

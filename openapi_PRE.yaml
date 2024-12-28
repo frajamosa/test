@@ -1,0 +1,3513 @@
+openapi: 3.0.1
+info:
+  title: API - Originación y Desembolso de Préstamos
+  description: ''
+  version: 1.0.0-SNAPSHOT
+servers:
+  - url: http://localhost:9081
+    description: Generated server url
+paths:
+  /loan/loanSimulation:
+    post:
+      tags:
+        - loan-rest-controller
+      summary: Simular Préstamo
+      operationId: loanSimulation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanSimulationIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_loanSimulation'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                  
+  /loan/loanCreate:
+    post:
+      tags:
+        - loan-rest-controller
+      summary: Crear Préstamo
+      operationId: loanCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanCreateIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_loanCreate'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                   
+          
+  /loan/getParam:
+    post:
+      tags:
+        - loan-rest-controller
+      summary: Cargar Parametrización de un Producto de Préstamos (Gastos a la Cuota/Liquidación, Seguros y Tasas) 
+      operationId: getParam
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanGetParamIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_getParam'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                  
+          
+  /loan/cancel:
+    post:
+      tags:
+        - loan-rest-controller
+      summary: Anular Préstamo no desembolsado
+      operationId: cancel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanCancelIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_cancelLoan'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                  
+  /loan/applypayableacc:
+    post:
+      tags:
+        - loan-rest-controller
+      summary: Desembolsar Préstamo
+      operationId: applypayableacc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanApplypayableaccIn'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_applypayableac' 
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"   
+          
+components:
+  schemas:
+    LoanSimulationIn:
+      type: object
+      description: |
+        Simular Préstamo
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object            
+          properties:
+            prbLoan:
+              $ref: '#/components/schemas/OtrTprePrestamos'
+            prbContract:
+              $ref: '#/components/schemas/OtrTypcontract'
+            prbAdjusment:
+              $ref: '#/components/schemas/OtrTypadjusment'
+            ptbChargesrepay:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTyprepaymentcharges'
+            ptbChargesdisburs:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypvalliq'
+            ptbSchedule:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTyprepayment'
+            ptbInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptbClients:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliClicta'
+            ptbTabtargetfunds:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcajForpago'
+            ptbRepaymentvarquota:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrRepaymentCuoVar'
+            ptbAccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypchrpar'
+              description: |
+                  Realizar Simulación de Préstamo. Posición (1)  Valor (2, 3, 4) # Valores permitidos:  "2" Validaciones, "3" Construye Tabla de Pagos, "4" Validaciones Tabla de Pagos
+              example: "2, 3, 4"
+            ptbOthersparamn:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrOthersparamType'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            pnbDisbamt:
+              type: number
+              description: |
+                  Monto del préstamo.
+              example: 500000
+              nullable: false              
+    OtrOthersparamType:
+      type: object
+      description: |
+          Detalle de datos adicionales de tipo numérico. Se definen por posición.
+      properties:
+        field 6: 
+          type: number
+          description: |
+            Monto del Préstamo.
+          example: 500000
+          nullable: false
+        field 7: 
+          type: number
+          description: |
+            Monto del Préstamo.
+          example: 500000
+          nullable: false
+        field 8: 
+          type: number
+          description:  |
+            Origen de Fondos.
+          nullable: false
+          example: 1
+        field 11: 
+          type: number
+          description: |
+            Código ejecutivo de cuenta.
+            Ítem catálgo catExecutive.
+          example: 234
+          nullable: false
+        field 12: 
+          type: number
+          description: |
+            Valor cuota sugerida.
+            example: 
+          nullable: true
+        field 13: 
+          type: number
+          description: |
+            Módulo a Pignorar BackToBack.
+          example: 
+          nullable: true
+        field 14: 
+          type: number
+          description: |
+            Cuenta a Pignorar BackToBack.
+          example: 
+          nullable: true
+    OtrTcajForpago:
+      type: object
+      description: |
+            Detalle del Destino de Fondos.
+      properties:
+        fpaCodeje:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System.
+            Ítem del catálogo catExecutive.
+          example: 456
+          nullable: true           
+        fpaNumpago:
+          type: integer
+          format: int32
+          description: |
+            Número de Pago por usuario para identificar el desglose.
+          example: 1
+          nullable: true
+        fpaSec:
+          type: integer
+          format: int32
+          description: |
+            Secuencial de desglose por usuario y número de pago, para identificar el desglose.
+          example: 1
+          nullable: true          
+        fpaFecha:
+          type: string
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de la transacción, si no se envía aplica fecha del sistema.
+          example: "20222/10/28"
+          nullable: true 
+        fpaSucorg:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal de origen de la transacción monetaria.
+            Ítem del catálogo catBranch.
+          example: 5
+          nullable: true
+        fpaOfiorg:
+          type: integer
+          format: int32
+          description: |
+            Código de la oficina de origen de la transacción monetaria.
+            Ítem del catálogo catOffice.
+          example: 1            
+          nullable: true          
+        fpaModorg:
+          type: integer
+          format: int32
+          description: |
+            Código módulo de la cuenta que origina la emisión de la operación de los fondos.
+            Ítem del catálogo catModule.
+          example: 6
+          nullable: true          
+        fpaValor:
+          type: number
+          description: |
+            Valor de la transacción monetaria.
+          example: 500000
+          nullable: true          
+        fpaMonorg:
+          type: integer
+          format: int32
+          description: |
+            Moneda de origen de la transacción monetaria.
+            Ítem del catálgo catCurrency.
+          example: 0          
+          nullable: true          
+        fpaModdes:
+          type: integer
+          format: int32
+          description: |
+            Código del módulo de la operación destino de la transacción monetaria.
+            Ítem del catálogo catModule.
+          example: 3       
+          nullable: false          
+        fpaCotcompra:
+          type: number
+          description: |
+            Cotización de compra, aplica para moneda extranjera.
+            Ítem del catálgo catCounterQuote.
+          example: 1            
+          nullable: true          
+        fpaCotventa:
+          type: number
+          description: |
+            Cotizacion de venta, aplica para moneda extranjera.
+            Ítem del catálgo catCounterQuote.
+          example: 1              
+          nullable: true          
+        fpaProorg:
+          type: integer
+          format: int32
+          description: |
+            Código del producto de la operación origen de la transacción monetaria.
+            Ítem catálogo catProduct.
+          example: 5
+          nullable: true          
+        fpaTiporg:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo prodcuto de la operación origen de la transacción monetaria.
+            Ítem catálogo catTypeProduct.
+          example: 1            
+          nullable: true          
+        fpaCuentaorg:
+          type: integer
+          format: int32
+          description: |
+             Número de la cuenta origen de la transacción monetaria.
+             Ítem catálogo catLoan.
+          example: 6001934329               
+          nullable: true          
+        fpaNumsol:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        fpaSucdes:
+          type: integer
+          format: int32
+          description: |
+            Código de la sucursal destino de la transacción monetaria.
+            Ítem del catálogo catBranch.
+          example: 5            
+          nullable: true          
+        fpaOfides:
+          type: integer
+          format: int32
+          description: |
+            Código de la oficina destino de la transacción monetaria.
+            Ítem del catálogo catOffice.
+          example: 1            
+          nullable: true          
+        fpaProdes:
+          type: integer
+          format: int32
+          description: |
+            Código del producto de la operación destino de la transacción monetaria.
+            Ítem del catálogo catProduct.
+          example: 1             
+          nullable: true          
+        fpaTipdes:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo producto de la operación destino de la transacción monetaria.
+            Ítem del catálogo catTypeProduct.
+          example: 1              
+          nullable: true          
+        fpaCuentades:
+          type: integer
+          format: int32
+          description: |
+            Número de la operación destino de la transacción monetaria.
+          nullable: true          
+        fpaMondes:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda de la operación destino de la transacción monetaria.
+            Ítem del catálogo catCurrency.
+          example: 0            
+          nullable: true          
+        fpaClides:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        fpaBeneficia:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        fpaCodcargo:
+          type: integer
+          format: int32
+          description: |
+            Codigo de cargo cuando el destino de fondos es por transferencia o cheque.
+          nullable: true          
+        fpaCargo:
+          type: number
+          description: |
+            Valor por cargo en la transacción.
+          nullable: true          
+        fpaCodusr:
+          type: integer
+          format: int32
+          description: |
+            Código de usuario FISA System que procesa la transacción.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157              
+          nullable: true          
+        fpaNumtran:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        fpaTransa:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        fpaDeptoorg:
+          type: integer
+          format: int32
+          description: |
+            Departamento origen de desglose de fondos. 
+            Ítem catálogo 40.
+          example: 13
+          nullable: true          
+        fpaDeptodes:
+          type: integer
+          format: int32
+          description: |
+            Departamento destino de desglose de fondos. 
+            Ítem catálogo 40.
+          example: 13            
+          nullable: true          
+        fpaTraorg:
+          type: integer
+          format: int32
+          description: |
+            Transacción que origina el desglose de fondos.
+            Ítem del catálogo catTransaction.
+          example: 7            
+          nullable: true
+          enum: [197]
+        fpaInscargo:
+          type: string
+          description: |
+             No aplica.
+          nullable: true          
+        fpaCccargo:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        fpaCvcargo:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        fpaFechaprocplz:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        fpaValorpenalizado:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        fpaIsctaxpag:
+          type: string
+          description: |
+            No aplica.
+          nullable: true
+    OtrRepaymentCuoVar:
+      type: object
+      description: |
+            Detalle de cuotas variables.
+      properties:
+        nYear:
+          type: integer
+          format: int32
+          description: |
+            Año en el que se debe aplicar el cuotón.
+          example: 2024
+          nullable: true           
+        nMonth:
+          type: integer
+          format: int32
+          description: |
+            Mes en el que se debe aplicar el cuotón.
+          example: 1
+          nullable: true
+        nAmount:
+          type: integer
+          format: int32
+          description: |
+            Monto del cuotón.
+          example: 30000
+          nullable: true          
+        nperiod:
+          type: integer
+          format: int32
+          description: |
+            Período afectado por el cuotón en la tabla de pagos.
+          example: 15
+          nullable: true            
+    OtrTcliClicta:
+      type: object
+      description: |
+            Detalle de clientes relacionados con el préstamo.
+      properties:
+        clcCodcli:
+          type: integer
+          format: int32
+          description: |
+            Codigo del cliente.
+            Ítem del catálgo carClient.
+          example: 8564
+          nullable: false
+        clcCodtab:
+          type: integer
+          format: int32
+          description: |
+            Codigo de tabla de tipos de relación cliente – operación.
+          enum: [39]
+          nullable: false
+        clcCue:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        clcDireccion:
+          type: integer
+          format: int32
+          description: |
+            Código de la Dirección del Cleitne a la que se debe enviar el estado de cuenta.
+          example: 1
+          nullable: true          
+        clcMod:
+          type: integer
+          format: int32
+          description: |
+            Código del módulo del producto del préstamo.
+            Ítem catálgo catModule.
+          example: 6
+          nullable: false          
+        clcMon:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda del producto del préstamo.
+            Ítem catálgo catCurrency.
+          example: 0            
+          nullable: true          
+        clcOrden:
+          type: integer
+          format: int32
+          description: |
+            Orden de titularidad de los clientes del préstamo.
+            example: 1
+          nullable: true          
+        clcPorcentaje:
+          type: integer
+          format: int32
+          description: |
+            Porcetaje de participacion de los clientes del préstamo.
+          example: 100
+          maximum: 100
+          nullable: true          
+        clcPro:
+          type: integer
+          format: int32
+          description: |
+            Código del producto del préstamo.
+            Ítem del catálgo catProduct.
+          example: 5
+          nullable: true
+        clcTip:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de producto del préstamo.
+            Ítem del catálgo catTypeProduct.
+          example: 1            
+          nullable: true
+        clcTiporel:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de relación del cliente con el préstamo. 
+            Ítem catálogo 39.
+          example: 5
+          nullable: false          
+        clcTitular:
+          type: string
+          description: |
+            Maca que identifica al cliente Deudor Principal del Préstamo.
+          enum: [Y, O, null]
+          example: 
+          nullable: true
+    OtrTprePrestamos:
+      type: object
+      description: |
+            Datos del Contrato.
+      properties:
+        preCredito:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true
+        preTip:
+          type: integer
+          format: int32
+          description: |
+            Código del Tipo de Producto del préstamo.
+            Ítem del catálgo catTypeProduct.
+          example: 1
+          nullable: false
+        prePro:
+          type: integer
+          format: int32
+          description: |
+            Código del Producto del préstamo.
+            Ítem del catálogo catProduct.
+          example: 5            
+          nullable: false          
+        preMod:
+          type: integer
+          format: int32
+          description: |
+             Código del Módulo de Producto del préstamo.
+             Ítem del catálogo catModule.
+          example: 6 
+          nullable: false          
+        preTabtipocuo:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo de tipo de Plan de Pagos del préstamo.
+          enum: [68]
+          nullable: false           
+        preTipocuo:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de Plan de Pagos del préstamo.
+             Ítem catálgo catModule.
+          example: 12            
+          nullable: true
+        preClientep:
+          type: integer
+          format: int32
+          description: |
+            Código del Cliente Deudor Princiapl del préstamo.
+            Ítem catálgo catClient.
+          example: 8546
+          nullable: false         
+        preNumdir:
+          type: integer
+          format: int32
+          description: |
+            Código de la dirección por defecto del Cliente Principal del préstamo. Por defecto es 1.
+          example: 1
+          nullable: false           
+        preNombre:
+          type: string
+          description: |
+            No aplica.
+          nullable: true
+        preFecemi:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preMoneda:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preStatus:
+          type: string
+          description: |
+             No aplica.
+          nullable: true           
+        preCodeje:
+          type: integer
+          format: int32
+          description: |
+            Código del ejecutivo del producto FSY
+            Ítem catálogo catExecutive.
+          example: 234
+          nullable: false
+        prePlazo:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preTabtipotasa:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTipotasa:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTasapac:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preFecven:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preMonto:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preFecontab:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preCodtipgar:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preGarantia:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preSucursal:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preOficina:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preDestecon:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preNumrenov:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preCuentat:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preTipmodt:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preDiasper:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preTabtiporea:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preTiporea:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preMrgref:
+          type: number
+          description: |
+            No aplica.
+          nullable: true           
+        prePlzorea:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preProxrea:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true           
+        preValent:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preMulta:
+          type: number
+          description: |
+             No aplica.
+          nullable: true          
+        preFecance:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preFecmora:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preReferencia:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preCredant:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preCredasoc:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preNumlinea:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preDiasfijo:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preDescuento:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preTabciudad:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preCiudes:
+          type: integer
+          format: int32
+          description: |
+            Código de la ciudad de apertura del préstamo.
+            ítem del catálogo 1.
+          example: 1301
+          nullable: false
+        preCiupago:
+          type: integer
+          format: int32
+          description: |
+            Código de la ciudad de pago del préstamo.
+            ítem del catálogo 1.
+          example: 1301
+          nullable: false
+        preFecastigo:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preFecplzven:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true
+        preFecfonext:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true
+        preDiasinicio:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preNumcomprom:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTasaadree:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preTasaadcf:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        prePignora:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preSegban:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preFecarr:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preReajust:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preTasaflo:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preRetenido:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preRefreten:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preFecultrea:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true
+        preSeginc:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preTabdescuento:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preDesplani:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preMontoorg:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preNumper:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preInteresant:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preSecaor:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preCobrafeci:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        prePagadic:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preFecultupd:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preFecproxrev:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true
+        preCuofijas:
+          type: string
+        preFecoriginal:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true
+        preVendihabil:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preDesfondos:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preNivseg:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preMonmn:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preMontomn:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preDebgarantiza:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preNumpergracia:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTabcalifica:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preCalifica:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTabtipocredito:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTipocredito:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preDocumentos:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preGracia:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preStatusreal:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preFecultreproc:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preModvencorg:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preCtavencorg:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preRefvencorg:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preSegces:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        prePlazoorg:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preDiaspercap:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preGeneracuo:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preExcluyedeu:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preDiasbase:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preBasemes:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preDiferido:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preTaborigfondos:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preOrigfondos:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preUsacondge:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preGrupo:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preStatusint:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preQuotations:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preValorcuota:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preTabfrecuencia:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preFrecuencia:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        prePeriodofrec:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTabpagofechabase:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        prePagofechabase:
+          type: integer
+          format: int32
+          description: |
+             No aplica.
+          nullable: true          
+        preInipagocapital:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true          
+        preStatusorg:
+          type: string
+          description: |
+            No aplica.
+          nullable: true           
+        preUltsecuenciahis:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true           
+        preFeculthistorico:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true           
+        preNogenhistorico:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+        preTabtiptasrea:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTiptasrea:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTabtipoperea:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preTipoperea:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        preMargrea:
+          type: number
+          description: |
+            No aplica.
+          nullable: true          
+        preObsanulacion:
+          type: string
+          description: |
+            No aplica.
+          nullable: true          
+    OtrTypadjusment:
+      type: object
+      description: |
+            Información para de la tasa de interés del préstamo e información para el reajuste.
+      properties:
+        allowed:
+          type: string
+          description: |
+            Indica si el préstamo es reajustable o no.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "N"
+          nullable: false
+        floating:
+          type: string
+          description: |
+            Indica si el préstamo es de Tasa flotante o no.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no
+          example: "N"
+          nullable: false          
+        tabtypead:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de tipo de reajuste. Por defecto 60.
+          enum: [60]
+          nullable: false            
+        typead:
+          type: integer
+          format: int32
+          description: |
+            Código del tipo de reajuste. Ítem catálogo 60.
+          example: 1
+          nullable: true          
+        term:
+          type: integer
+          format: int32
+          description: |
+            Plazo de reajuste establecido para el crédito (número de días).
+          example: 639
+          nullable: true 
+        beforedate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha del reajuste anterior.
+          nullable: true           
+        nextdate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha del próximo reajuste.
+          nullable: true           
+        tabrate:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo de tasas referenciales.
+          enum: [67]
+          nullable: true           
+        rate:
+          type: integer
+          format: int32
+          description: |
+            Código de la tasa referencial.
+          example: 1
+          nullable: true           
+        taboperator:
+          type: integer
+          format: int32
+          description: |
+            Código del catálogo de operaciones sobre la tasa para aplicar reajuste.
+          enum: [67]
+          nullable: true           
+        operator:
+          type: integer
+          format: int32
+          description: |
+            Código de la operación sobre la tasa para aplicar reajuste.
+          nullable: true           
+        spread:
+          type: number
+          description: |
+            Valor del margen que deacuerdo con el operador se considerará sobre la tasa referencial al aplicar el reajuste.
+          example: 19.020000
+          nullable: true           
+    OtrTypchrpar:
+      type: object
+      description: |
+            Parámetros adicionales, de tipo caracter. Se definen por posición.
+      properties:
+        field 1:
+          type: string
+          description: Acciones a realizar por el servicio. Posibles valores (1, 2, 3, 4, 5)  "1" Carga Parametrizacion Fisa System, "2" Validaciones, "3" Construye Tabla de Pagos, "4" Validaciones Tabla de Pagos, "5" Crea Prestamo.
+        field 2:
+          type: string
+          description: Validar datos tasa de interés. Valores  "1" para sí, "0" para no.
+          example: 1
+        field 3:
+          type: string
+          description: Validar gastos a la cuota. Valores  "1" para sí, "0" para no.
+          example: 1
+        field 4:
+          description: Validar gastos a la liquidación. Valores  "1" para sí, "0" para no. 
+          example: 1
+        field 5:
+          type: string
+          description: Validar seguros a la cuota. Valores  "1" para sí, "0" para no.
+          example: 1
+        field 6:
+          type: string
+          description: Validar seguros a la liquidación. Valores  "1" para sí, "0" para no.
+          example: 1
+        field 7:
+          type: string
+          description: Validar Transacción de Contabilización del Préstamo. Valores  "1" para sí, "0" para no.
+          example: 1
+        field 8:
+          type: string
+          description: Validar monto a simular. Valores  "1" para sí, "0" para no.
+          example: 1
+        field 101:
+          type: string
+          description: Número de Solicitud.
+          example: 128
+        field 102:
+          type: string
+          description: Secuencia de Solicitud.
+          example: 1
+        field 103:
+          type: string
+          description: Descripción de la Retención.
+        field 139:
+          type: string
+          description: Propósito de la cuenta.        
+          example: "COMPRA DE AUTO"
+    OtrTypcontract:
+      type: object
+      description: |
+            Información de datos generales del préstamo.
+      properties:
+        contractid:
+          type: integer
+          format: int32
+          description: |
+            Número de préstamo.
+          nullable: true          
+        ccy:
+          type: integer
+          format: int32
+          description: |
+            Código de la moneda del producto en FISA System.
+            Ítem catálogo catCurrency.
+          example: 0
+          nullable: false          
+        client:
+          type: integer
+          format: int32
+          description: |
+            Código del cliente principal en FISA System.
+            Ítem catálogo catClient.
+          example: 8546            
+          nullable: false 
+        ccyref:
+          type: integer
+          format: int32
+          description: |
+            Código de moneda referencial del producto en FISA System.
+          nullable: true 
+        amount:
+          type: number
+          description: |
+            Monto del préstamo en moneda del producto en FISA System.
+          example: 500000
+          nullable: false 
+        valuedate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de emisión del préstamo.
+          example: "2022/10/01"
+          nullable: false 
+        maturity:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de vencimiento del préstamo.
+          example: "2024/07/01"
+          nullable: false
+        tabscheduletype:
+          type: integer
+          format: int32
+          description: |
+            Tipo de tabla de pagos. Su valor corresponde a un ítem del catálogo 68.
+          nullable: false 
+        scheduletype:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo tabla de pagos.
+          example: 12
+          enum: [68]
+          nullable: false
+        tabinterestkey:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo Tipo de Tasa de Interés Referencial. Por defecto 67.
+          enum: [67]
+          nullable: false
+        interestkey:
+          type: integer
+          format: int32
+          description: |
+            Código de Tipo de Tasa de Interés Referencial. Su valor corresponde a un ítem del catálogo 67.
+          example: 1
+          nullable: false 
+        interestkeyrate:
+          type: number
+          description: |
+            Valor de la Tasa Referencial
+          example: 0,000000
+          nullable: true 
+        interestrate:
+          type: number
+          description: |
+            Valor Tasa de Interés pactada Anualizada. interestrate = interestkey + interestspread.
+          example: 19,020000
+          nullable: false
+        interestspread: 
+          type: number
+          description: |
+            Valor del margen de la Tasa Pactada del Préstamo.
+          example: 19,020000
+          nullable: false 
+        effectiverate:
+          type: number
+          description: |
+            Valor de la tasa efectiva.
+          example: 19,020000
+          nullable: true 
+        sourceoffunds:
+          type: integer
+          format: int32
+          description: |
+            Código de origen de fondos.
+          example: 1
+          nullable: true 
+        intfinanspread:
+          type: number
+          description: |
+            No aplica.
+          nullable: true 
+        tabintcalcmeth:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo del método de cálculo.
+          enum: [145]
+          nullable: false
+        intcalcmethod:
+          type: integer
+          format: int32
+          description: |
+            Código del Método de Cálculo. Por defecto Método de Cálculo Proporcional = 1.
+          example: 1
+          nullable: false
+        tabfrequency:
+          type: integer
+          format: int32
+          description: |
+            Código catálogo de frecuencia de pago.
+          enum: [609]
+          nullable: false 
+        frequency:
+          type: integer
+          format: int32
+          description: |
+            Código frecuencia de pago entre cuotas del plan de pagos.
+          example: 4
+          nullable: false 
+        freperiod:
+          type: integer
+          format: int32
+          description: |
+            Período de Pago. Número de frecuencias de pago entre cuotas del plan de pagos.
+          example: 1
+          nullable: false 
+        priperiod:
+          type: integer
+          format: int32
+          description: |
+            Períodos de la frecuencia del pago de capital. Aplica a tipo de cuota 3
+          nullable: true 
+        initpaydate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de vencimiento de la primera cuota.
+          example: "2022/11/01"
+          nullable: false
+        initprinpaydate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de vencimiento de la primera cuota de capital.
+          example: "2022/11/01"            
+          nullable: false
+        periods:
+          type: integer
+          format: int32
+          description: |
+            Número de dividendos
+          example: 37
+          nullable: false 
+        graceperiods:
+          type: integer
+          format: int32
+          description: |
+            Número de periodos de gracia.
+          nullable: false 
+        daybasis:
+          type: integer
+          format: int32
+          description: |
+            Tipo Calendario para cálculo de los días de interés // BaseMes.
+          example: 360
+          nullable: false 
+        daysinyear:
+          type: integer
+          format: int32
+          description: |
+            Tipo Calendario para el que se divide al encontrar interés // DiasBase.
+          example: 365
+          nullable: false 
+        paymentday:
+          type: integer
+          format: int32
+          description: |
+            Día fijo de vencimiento de cada cuota.
+          example: 
+          nullable: true 
+        tabforwardbackward:
+          type: integer
+          format: int32
+          description: |
+            Código catálgo de Tipo de Calendario (Calendar, Forward,Backward, etc).
+          enum: [116]
+          nullable: false 
+        forwardbackward:
+          type: integer
+          format: int32
+          description: |
+            Tipo de Calendario (Calendar, Forward,Backward, etc).
+          example: 4
+          nullable: false
+        tabbasedatekey:
+          type: integer
+          format: int32
+          description:  |
+            Código catálgo Fecha Base. 
+          enum: [610]
+          nullable: false
+        basedatekey:
+          type: integer
+          format: int32
+          description: |
+            Fecha Base (Base o Previa).
+          example: 2
+          nullable: false
+        monthsnotpay:
+          type: string
+          description: |
+            Meses que no se paga dividendo. Ejemplo, no paga diciembre, valor 12.
+          example: 
+          nullable: true 
+        lastquoexceed:
+          type: string
+          description: |
+            Marca que indica si el excedente de la última cuota se suma a la anterior, aplica en tipo cuota 1.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no       
+          example: "N"
+          nullable: true 
+        repaymentamt:
+          type: number
+          description: |
+            Valor de la cuota fija de pago, aplica en tipo cuota 1.
+          example: 239178
+          nullable: true 
+        tabinterestexceed:
+          type: integer
+          format: int32
+          description: |
+            Código Catálogo Excedente de Interés.
+          enum: [625]
+          nullable: false 
+        interestexceed:
+          type: integer
+          format: int32
+          description: |
+            Excedente de Interés.
+            Ítem del catálogo 625.
+          example: 
+          nullable: true 
+        havefraction:
+          type: string
+          description: |
+            No aplica.
+          nullable: true 
+        fractionamount:
+          type: number
+          description: |
+            No aplica.
+          nullable: true 
+        fractionmaturity:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true 
+        fractioninitpaydate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true 
+        fractioninitprinpaydate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true 
+        fractionfreperiod:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true 
+        fractionperiods:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true 
+        fractionrepaymentamt:
+          type: number
+          description: |
+            No aplica.
+          nullable: true 
+        calendar:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true 
+    OtrTypinsurance:
+      type: object
+      description: |
+            Información de los seguros a la cuota.
+      properties:
+        segTipo:
+          type: string
+          description: |
+            Tipo de seguro colectivo o endosado.
+          enum: [S, N] # Valores permitidos: "S" colectivo, "E" Endoso
+          nullable: false
+        segCodval:
+          type: integer
+          format: int32
+          description: |
+            Tipo de seguro.
+          enum: [1, 2, 3] # Valores permitidos: "1" Vida, "2" Incendio, "3" Cesantía
+          nullable: false
+        segSolicitud:
+          type: string
+          description: |
+            Solicitud seguros.
+          nullable: true 
+        segSolsec:
+          type: number
+          description: |
+            Secuencia general de la solicitud (N seguros)
+          nullable: true          
+        segSolseccli:
+          type: number
+          description: |
+            Secuencia de cliente en la solicitud
+          nullable: true          
+        segSolsecgar:
+          type: number
+          description: |
+            Secuencia de garantía en la solicitud
+          nullable: true          
+        segSolsecope:
+          type: number
+          description: |
+            Secuencia de operación en la solicitud
+          nullable: true          
+        segTipoid:
+          type: string
+          description: |
+            Tipo de identificación del cliente (puede venir mas de un cliente). Información Cliente.
+          nullable: true          
+        segIdentifica:
+          type: string
+          description: |
+            Identificación del cliente (puede venir mas de un cliente). Información Cliente.
+          nullable: true          
+        segClienteid:
+          type: integer
+          format: int32
+          description: |
+            Código de cliente FISA System relacionado con el préstamo. Información Cliente.
+          nullable: true          
+        segNumgaran:
+          type: integer
+          format: int32
+          description: |
+            Número de garantía de cliente, con la cual se va a garantizar el préstamo. Información Garantía.
+          nullable: true          
+        segTipgar:
+          type: integer
+          format: int32
+          description: |
+            Tipo de garantía. Ítem del catálogo 33. Información Garantía.
+          nullable: true          
+        segTipbien:
+          type: integer
+          format: int32
+          description: |
+            Tipo de bien. Ítem del catálogo 22. Información Garantía.
+          nullable: true          
+        segCredito:
+          type: integer
+          format: int32
+          description: |
+            Préstamo al que aplica el seguro. Información del Préstamo.
+          nullable: true          
+        segCobertura:
+          type: number
+          description: |
+            Valor cobertura seguro. Información del Seguro.
+          nullable: true
+        segMoneda:
+          type: integer
+          format: int32
+          description: |
+            Moneda de la prima del seguro. Información del Seguro.
+          nullable: true
+        segSecuencia:
+          type: integer
+          format: int32
+          description: |
+            Secuencia de operación en la solicitud. Información del Seguro.
+          nullable: true
+        segCategoria:
+          type: integer
+          format: int32
+          description: |
+            Código categoria del seguro colectivo. Información del Seguro.
+          nullable: true
+        segCertificado:
+          type: string
+          description: |
+            Certificado. Información del Seguro.
+          nullable: true
+        segDescripcion:
+          type: string
+          description: |
+            Solo incendio colectivo, corresponde a la descripción de la garantía. Información del Seguro.
+          nullable: true
+        segTasaaseg:
+          type: number
+          description: |
+            Tasa de aseguradora. Información del Seguro.
+          nullable: true
+        segTasaban:
+          type: number
+          description: |
+            Tasa Institución Financiera. Información del Seguro.
+          nullable: true
+        segImpuesto:
+          type: number
+          description: |
+            Indica el valor del impuesto sobre seguro vida/cesantia. Información del Seguro.
+          nullable: true
+        segPctcobertura:
+          type: number
+          description: |
+            Porcentaje de cobertura del seguro. Información del Seguro.
+          nullable: true
+        segPctrecargo:
+          type: number
+          description: |
+            Porcentaje de recargo. Información del Seguro.
+          nullable: true
+        segPctpart:
+          type: number
+          description: |
+            Porcentaje de participación. Información del Seguro.
+          nullable: true
+        segPrimamensual:
+          type: number
+          description: |
+            Valor de la prima mensual. Información del Seguro.
+          nullable: true
+        segPrimaanual:
+          type: number
+          description: |
+            Valor prima anual. Información del Seguro.
+          nullable: true
+        segPrimadesemb:
+          type: number
+          description: |
+            Prima para el desembolso.
+          nullable: true
+        segPrimacuota:
+          type: number
+          description: |
+            Prima de la cuota (prima periodo). Información del Seguro.
+          nullable: true
+        segTasacuota:
+          type: number
+          description: |
+            Valor de la prima a cobrarse en las cuotas o en la liquidación. Información del Seguro.
+          nullable: true
+        segCliedad:
+          type: number
+          description: |
+            Edad del cliente, aplica sobre seguro de vida/cesantía. Seguro Colectivo.
+          nullable: true
+        segClitipo:
+          type: integer
+          format: int32
+          description: |
+            Tipo de persona (Natural, Jurídico). Seguro Colectivo.
+          nullable: true
+        segAuxcobertura1:
+          type: number
+          description: |
+             Opción de cobertura1, Monto Préstamo, aplica a seguro de Vida. Seguro Colectivo.
+          nullable: true
+        segAuxcobertura2:
+          type: number
+          description: |
+            Opción de cobertura2, Monto Bien, aplica a seguro de Incendio. Seguro Colectivo.
+          nullable: true
+        segAuxmoneda:
+          type: integer
+          format: int32
+          description: |
+            Moneda de la cobertura, en el caso de garantías puede estar en otra moneda. Si viene en null se presume la moneda del préstamo(seguro) que aplicaría para vida y cesantía. Seguro Colectivo.
+          nullable: true
+        segCodasegu:
+          type: integer
+          format: int32
+          description: |
+            Código de aseguradora. Seguro Endosado.
+          nullable: true
+        segPoliza:
+          type: string
+          description: |
+            Código de póliza. Seguro Endosado.
+          nullable: true
+        segEmipol:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de emisión de poliza. Seguro Endosado.
+          nullable: true
+        segVencepol:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de vencimiento de la poliza. Seguro Endosado.
+          nullable: true
+        segEndosodesde:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha endoso desde, solo incendio. Seguro Endosado.
+          nullable: true
+        segEndosohasta:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha endoso hasta, solo incendio. Seguro Endosado.
+          nullable: true
+        segDesde:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha desde (histórico)
+          nullable: true
+        segHasta:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha hasta (historico)
+          nullable: true
+    OtrTyprepayment:
+      type: object
+      description: |
+            Plan de pagos del préstamo.
+      properties:
+        periodnumber:
+          type: integer
+          format: int32
+          description:  |
+            Número de dividendo.
+          example: 1
+          nullable: false
+        valuedate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de inicio del dividendo.
+          example: "2022/10/01"
+          nullable: false
+        maturity:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha de Vencimiento.
+          example: "2022/11/01"
+          nullable: false
+        interestdays:
+          type: integer
+          format: int32
+          description: |
+            Días de interés para el período.
+          example: 31
+          nullable: false
+        interestrate:
+          type: number
+          description: |
+            Tasa de Interés pactada Anualizada
+          example: 19.020000
+          nullable: false
+        amount:
+          type: number
+          description:  |
+            Valor total de la cuota.
+          example: 239178
+          nullable: false
+        principal: 
+          type: number
+          description:  |
+            Capital de la cuota.
+          example: 130100
+          nullable: true
+        interest:
+          type: number
+          description:  |
+            Interés de la cuota.
+          example: 109078
+          nullable: true
+        commission:
+          type: number
+          description:  |
+            Valor de las comisiones de la cuota.
+          example: 0
+          nullable: true
+        tax:
+          type: number
+          description:  |
+            Valor de los impuestos de la cuota.
+          example: 0
+          nullable: true
+        charge:
+          type: number
+          description:  |
+            Valor de los cargos de la cuota.
+          nullable: true
+        insurance:
+          type: number
+          description:  |
+            Valor de los seguros de la cuota.
+          example: 0
+          nullable: true
+        addinterest:
+          type: number
+          description:  |
+            Valor del interés adicional.
+          example: 0
+          nullable: true
+        dueinterest:
+          type: number
+          description:  |
+            Valor del interés anterior.
+          example: 0
+          nullable: true
+        capinterest:
+          type: number
+          description: |
+             No aplica.
+          example: 0
+          nullable: true
+        outstanding:
+          type: number
+          description:  |
+            Capital reducido.
+          example: 6659918
+          nullable: false
+        intdaysaccum:
+          type: number
+          description:  |
+            No aplica.
+          nullable: true
+        typeprincipal:
+          type: string
+          description: |
+            No aplica. 
+          nullable: true
+        processpaydate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description:  |
+            No aplica.
+          nullable: true
+        bookpaydate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description:  |
+            No aplica.
+          nullable: true
+        valuepaydate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            No aplica.
+          nullable: true
+        lastadjustdate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description:  |
+            No aplica.
+          nullable: true
+        originalprincipal:
+          type: number
+          description:  |
+            No aplica.
+          nullable: true
+        fractionamount: 
+          type: number
+          description:  |
+            No aplica.
+          nullable: true
+        processcreateperiod:
+          type: string
+          description:  |
+            No aplica.
+          nullable: true
+    OtrTyprepaymentcharges:
+      type: object
+      description: |
+            Detalle de gastos a la cuota.
+      properties:
+        ntipval:
+          type: number
+          description: |
+            Código Tipo Valor del Gasto. Ítem catálogo 91.
+          enum: [1, 2, 3, 5] # 1 Comisión, 3 Cargo, 2 Impuesto, 5 Seguro
+          example: 1          
+          nullable: false
+        nchargeid:
+          type: number
+          description: |
+            Código específico del cargo, commission o impuesto.
+          example: 5
+          nullable: false
+        dfrom:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha desde la que se aplica el gasto. 
+          example: "2022/10/01"
+          nullable: false          
+        dto:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fechas hasta la que se aplica el gasto
+          nullable: true          
+        nterm:
+          type: number
+          description: |
+            Período para el que se aplica el cargo desde la fecha de emisión (NULL) => 9999.
+          maximum: 9999
+          nullable: true          
+        nappliedto:
+          type: number
+          description: |
+            Rubro sobre al que se aplica el gasto.
+          nullable: true          
+        nrate:
+          type: number
+          description: |
+            Valor de la tasa, si aplica al gasto.
+          nullable: true          
+        npercentage:
+          type: number
+          description: |
+            Valor del porcentaje, si aplica al gasto.
+          nullable: true          
+        nminvalue:
+          type: number
+          description: |
+            Valor Fijo si aplica al gasto. 
+          example: 500
+          nullable: true          
+        vpayadint:
+          type: string
+          description: |
+            Se paga el interés adicional.
+          enum: [S, N] # Valores permitidos: "S" para sí, "N" para no 
+          nullable: true          
+        vpayinsurance:
+          type: string
+          description: |
+            Identificador de quién paga el seguro.
+          enum: [C, B] # Valores permitidos: (C)liente,(B)anco
+          nullable: true          
+        vbuiltin:
+          type: integer
+          format: int32
+          description:  |
+            Indica si el gasto es parte o no de la cuota.
+          enum: [1, 0] # Valores permitidos: "1" Se Calcula y Se Incluye en la Cuota, "0" Se calcula pero NO se incluye en el valor de Gastos
+          nullable: true          
+        tabevent:
+          type: integer
+          format: int32
+          description: |
+            No aplica. 
+          nullable: true          
+        event:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+    OtrTypvalliq:
+      type: object
+      description: |
+            Detalle de gastos a la liquidación.
+      properties:
+        sliOperador:
+          type: integer
+          format: int32
+          description: |
+            Código usuario FISA System que ejecuta la acción.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157              
+          nullable: true
+        sliNumero:
+          type: integer
+          format: int32
+          description: |
+            Número de solicitud.
+          example: 1
+          nullable: true          
+        sliTipval:
+          type: integer
+          format: int32
+          description: |
+            Código del Tipo Valor del Gasto. Ítem del catálogo 91
+          example: 
+          nullable: true          
+        sliTabtipval:
+          type: integer
+          format: int32
+          description: |
+            Código del Catálogo de Tipo Valor del Gasto. Por defecto 91. 
+          example: 2
+          enum: [91]
+          nullable: true          
+        sliCodval:
+          type: integer
+          format: int32
+          description:  |
+            Código específico del cargo, commission o impuesto.
+          example: 23
+          nullable: true          
+        sliValor:
+          type: number
+          description: |
+            Valor del gasto.
+          example: 13000
+          nullable: true          
+        sliFecha:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha desde la que tiene vigencia el gasto.
+          example: "2022/10/01"
+          nullable: true          
+        sliMoneda:
+          type: integer
+          format: int32
+          description: |
+            Codigo de la moneda del gasto.
+            Ítem catálogo catCurrency.
+          example: 0
+          nullable: true          
+        sliValorcal:
+          type: number
+          description:  |
+            Valor calculado del gasto.
+          example: 13000
+          nullable: true          
+        sliTasa:
+          type: number
+          description:  |
+            Tasa del gasto.
+          nullable: true          
+        sliPorcentaje:
+          type: number
+          description: |
+            Porcentaje del gasto.
+          nullable: true          
+        sliValorfijo:
+          type: number
+          description: |
+            Valor Fijo del gasto.
+          nullable: true          
+        sliVigencia:
+          type: integer
+          format: int32
+          description: |
+            No aplica.
+          nullable: true          
+        sliValuemax:
+          type: number
+          description: |
+            Valor maximo del gasto. 
+          nullable: true          
+        sliFormula:
+          type: string
+          description: |
+            Tipo de formula.  
+          nullable: true          
+        sliAplica:
+          type: integer
+          format: int32
+          description: |
+            Sobre que aplica el gasto.
+          nullable: true          
+    OtrWarnigs:
+      type: object
+      description: |
+            Detalle de mensajes que se presetan durante el proceso de originación.
+      properties:
+        message:
+          type: string
+          description: |
+            Campo texto del mensaje de alerta.
+    LoanSimulationOut:
+      type: object
+      description: |
+            Resultado de Simular Préstamo.
+      properties:
+        pcbUserid:
+          type: string
+          description: |
+            Código usuario FISA System que ejecuta la acción.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157  
+          nullable: false
+        pcbLanguageid:
+          type: string
+          description: |
+            Código ISO del lenguaje del usuario.
+          enum: [es]
+          nullable: false
+        pnbBranchid:
+          type: number
+          description: |
+            Código de la sucursal FISA System desde cual se ejecuta la acción.
+            Registrada en la transacción 1/2.
+            Ítem catálogo catBranch.
+          example: 2
+          nullable: false    
+        pnbOfficeid:
+          type: number
+          description: |
+            Código de la oficina FISA System desde cual se ejecuta la acción.
+            Ítem catálogo catOffice.
+            Relacionada con la sucursal indicada en "branchid". 
+            Registrada en la transacción 1/2.
+          example: 1
+          nullable: false   
+        pnbDeptoid:
+          type: number
+          description: |
+            Código del departamento FISA System desde cual se ejecuta la acción.
+            Ítem catálogo 40.
+            Registrado en la transacción 1/1.
+          example: 6
+          nullable: false  
+        pcbTerminalid:
+          type: string
+          description: |
+            Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+            Ítem catálogo catTerminal.
+            Registrado en la transacción 1/11.
+          example: 10.242.9.501          
+          nullable: false
+        prbLoan:
+          $ref: '#/components/schemas/OtrTprePrestamos'
+        prbContract:
+          $ref: '#/components/schemas/OtrTypcontract'
+        prbAdjusment:
+          $ref: '#/components/schemas/OtrTypadjusment'
+        ptbChargesrepay:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTyprepaymentcharges'
+        ptbChargesdisburs:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTypvalliq'
+        ptbSchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTyprepayment'
+        ptbInsurance:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTypinsurance'
+        ptbClients:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTcliClicta'
+        ptbTabtargetfunds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTcajForpago'
+        ptbRepaymentvarquota:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrRepaymentCuoVar'
+        ptbAccion:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTypchrpar'
+        ptbOthersparamn:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrOthersparamType'
+        ptbWarnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrWarnigs'
+        pnbDisbamt:
+          type: number
+          description: |
+            Monto del Préstamo.
+        pnbResponse:
+          type: number
+          description: |
+            Resultado del proceso. Valores "0" - error, "null" - OK.
+    LoanCreateIn:
+      type: object
+      description: Crear Préstamo
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object            
+          properties:
+            pcbUserid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            pcbLanguageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            pnbBranchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false    
+            pnbOfficeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false   
+            pnbDeptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false  
+            pcbTerminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            prbLoan:
+              $ref: '#/components/schemas/OtrTprePrestamos'
+            prbContract:
+              $ref: '#/components/schemas/OtrTypcontract'
+            prbAdjusment:
+              $ref: '#/components/schemas/OtrTypadjusment'
+            ptbChargesrepay:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTyprepaymentcharges'
+            ptbChargesdisburs:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypvalliq'
+            ptbSchedule:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTyprepayment'
+            ptbInsurance:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypinsurance'
+            ptbClients:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcliClicta'
+            ptbTabtargetfunds:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTcajForpago'
+            ptbRepaymentvarquota:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrRepaymentCuoVar'
+            ptbAccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypchrpar'
+              description: |
+                Curse Préstamo. Posición (1)  Valor (2, 3, 4) # Valores permitidos: "2" Validaciones, "3" Construye Tabla de Pagos, "4" "Validaciones Tabla de Pagos, "5" Crea Préstamo
+              example: "1, 2, 3, 4, 5,"
+            ptbOthersparamn:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrOthersparamType'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            pnbDisbamt:
+              type: number
+              description: |
+                Monto del préstamo.
+              example: 500000
+    LoanCreateOut:
+      type: object
+      description: |
+                Resultado Crear Préstamo
+      properties:
+        pcbUserid:
+          type: string
+          description: |
+            Código usuario FISA System que ejecuta la acción.
+            Registrado en la transacción 1/9.
+            Ítem catálogo catUser.
+          example: 157  
+          nullable: false
+        pcbLanguageid:
+          type: string
+          description: |
+            Código ISO del lenguaje del usuario.
+          enum: [es]
+          nullable: false
+        pnbBranchid:
+          type: number
+          description: |
+            Código de la sucursal FISA System desde cual se ejecuta la acción.
+            Registrada en la transacción 1/2.
+            Ítem catálogo catBranch.
+          example: 2
+          nullable: false    
+        pnbOfficeid:
+          type: number
+          description: |
+            Código de la oficina FISA System desde cual se ejecuta la acción.
+            Ítem catálogo catOffice.
+            Relacionada con la sucursal indicada en "branchid". 
+            Registrada en la transacción 1/2.
+          example: 1
+          nullable: false   
+        pnbDeptoid:
+          type: number
+          description: |
+            Código del departamento FISA System desde cual se ejecuta la acción.
+            Ítem catálogo 40.
+            Registrado en la transacción 1/1.
+          example: 6
+          nullable: false  
+        pcbTerminalid:
+          type: string
+          description: |
+            Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+            Ítem catálogo catTerminal.
+            Registrado en la transacción 1/11.
+          example: 10.242.9.501          
+          nullable: false
+        prbLoan:
+          $ref: '#/components/schemas/OtrTprePrestamos'
+        prbContract:
+          $ref: '#/components/schemas/OtrTypcontract'
+        prbAdjusment:
+          $ref: '#/components/schemas/OtrTypadjusment'
+        ptbChargesrepay:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTyprepaymentcharges'
+        ptbChargesdisburs:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTypvalliq'
+        ptbSchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTyprepayment'
+        ptbInsurance:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTypinsurance'
+        ptbClients:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTcliClicta'
+        ptbTabtargetfunds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTcajForpago'
+        ptbRepaymentvarquota:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrRepaymentCuoVar'
+        ptbAccion:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTypchrpar'
+        ptbOthersparamn:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrOthersparamType'
+          description: |
+                Detalle de Datos Adicionales numéricos para la Cuenta Vista a Originar.
+        ptbWarnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrWarnigs'
+          description: |
+                Lista de mensajes que se han presentando durante la ejecución del servicio.
+        pnbDisbamt:
+          type: number
+          description: |
+                Monto del Préstamo.
+          example: 500000
+        pnbResponse:
+          type: number
+          description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+          example: 
+          
+    LoanGetParamIn:
+      type: object
+      description: |
+                Cargar Parametrizacion FISA System.
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object            
+          properties:
+            pcbUserid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            pcbLanguageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            pnbBranchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false    
+            pnbOfficeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false   
+            pnbDeptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false  
+            pcbTerminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            prbLoan:
+              $ref: '#/components/schemas/OtrTprePrestamos'
+            ptbAccion:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrTypchrpar'
+              description: |
+                Carga Parametrizacion Fisa System. Posición (1) Valor(1) # Valores permitidos: "1" Carga Parametrizacion FISA System
+            ptbOthersparamn:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrOthersparamType'
+            ptbWarnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            pnbDisbamt:
+              type: number
+              description: |
+                Monto del Préstamo.
+              example: 500000
+              nullable: false          
+    LoanGetParamOut:
+      type: object
+      description: |
+                Resultado Cargar Parametrización.
+      properties:
+        prbLoan:
+          $ref: '#/components/schemas/OtrTprePrestamos'
+        prbContract:
+          $ref: '#/components/schemas/OtrTypcontract'
+        prbAdjusment:
+          $ref: '#/components/schemas/OtrTypadjusment'
+        ptbChargesrepay:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTyprepaymentcharges'
+        ptbChargesdisburs:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTypvalliq'
+        ptbInsurance:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrTypinsurance'
+        ptbOthersparamn:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrOthersparamType'
+          description: |
+                Detalle de Datos Adicionales numéricos para la Cuenta Vista a Originar.
+        ptbWarnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrWarnigs'
+          description: |
+                Lista de mensajes que se han presentando durante la ejecución del servicio.
+        pnbResponse:
+          type: number
+          description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+    LoanCancelIn:
+      type: object
+      description: |
+                Anular Préstamo.
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object            
+          properties:
+            loanid:
+              type: number
+              description: |
+                Número de Préstamo a anular.
+              example: 6001934329
+              nullable: false
+            comment:
+              type: string
+              description: |
+                Comentario asociado a la anulación.
+              example: "CLIENTE CAMBIO DE MODELO DE AUTO"
+              nullable: false          
+            operator:
+              type: number
+              description: |
+                Código Usuario FISA System del desembolso.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157                  
+              nullable: false          
+            branch:
+              type: number
+              description: |
+                Código Sucursal FISA System del desembolso.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2                
+              nullable: false          
+            office:
+              type: number
+              description: |
+                Código Oficina FISA System del desembolso.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1                
+              nullable: false            
+            procdate:
+              type: string
+              format: date # Este es el formato estándar para fechas
+              pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+              description: |
+                Fecha de proceso de la anulación.
+              example: "2022/10/01"
+              nullable: false             
+    LoanCancelOut:
+      type: object
+      description: |
+                Resultado de Anular Préstamo.
+      properties:
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtrWarnigs'
+        response:
+          type: number
+          description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+    LoanApplypayableaccIn:
+      type: object
+      description: |
+                Desembolsar Préstamo
+      required:
+        - ReqMessage
+        - Envelop
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'
+        Envelop:
+          type: object            
+          properties:
+            branch:
+              type: number
+              description: |
+                Código Sucursal FISA System del desembolso.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2                
+              nullable: false
+            office:
+              type: number
+              description: |
+                Código Oficina FISA System del desembolso.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1                
+              nullable: false          
+            depart:
+              type: string
+              description: |
+                Código Departamento FISA System del desembolso.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6                
+              nullable: false          
+            operator:
+              type: number
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157                  
+              nullable: false          
+            credit:
+              type: number
+              description: |
+                Número de Préstamo a desembolsar.
+                Ítem catálgo catLoan.
+              example: 6001934329
+              nullable: false          
+            account:
+              type: number
+              description: |
+                Número de Cuenta por Pagar utilizada como Destino de Fondos.
+                Ítem catálgo catAccount.
+              example: 4000008989
+              nullable: true          
+    LoanApplypayableaccOut:
+      type: object
+      description: |
+                Resultado de Desembolsar Préstamo
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object                  
+          properties:
+            account:
+              type: number
+              description: |
+                Número de Cuenta por Pagar utilizada como Destino de Fondos.
+              example: 4000008989                
+            credittype:
+              type: string
+              description: |
+                Nombre del Tipo de Crédito bajo el que se creó el préstamo.
+              example: "TOYOTA MIGRACION"
+            cycredit:
+              type: string 
+              description: |
+                Abreviatura de la moneda del préstamo.
+              example: "CLP"
+            localcy:
+              type: string
+              description: |
+                Abreviatura de la moneda local.
+              example: "CLP"
+            amount:
+              type: number
+              description: |
+                Monto del préstamo.
+              example: 500000
+            loccyamount:
+              type: number
+              description: |
+                Monto del préstamo en moneda local.
+              example: 500000
+            expenses:
+              type: number
+              description: |
+                Monto de gastos de liquidación.
+              example: 13000
+            deliveramount:
+              type: number
+              description: |
+                Monto desembolsado expresado en moneda local.
+              example: 487000
+            txnnumber:
+              type: number
+              description: |
+                Número de transacción monetaria generada para la contabilización.
+              example: 2727
+            warnings:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+              example: 
+                
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    X-ConversationId:
+      description: |
+        Identificador único de la conversación del servicio.
+
+        Por cada servicio que interviene en la orquestación se tiene un id de conversación.
+
+      example: "59491c7e-ad88-49ec-a2ad-99ddcb1f5674"
+
+      type: string
+      format: uuid
+
+    X-ChannelId:
+      description: |
+        Id del canal desde el cual se se está invocando el servicio. 
+        Ítem de catálogo 139.
+
+        Ej. de osibles Valores:
+           "2"    BOTON PAGO
+           "3"    CAJA EXPRESS
+           "5"    CAJA EXTERNA
+      type: string
+      maxLength: 50
+      example: "2"
+      
+    X-CarDealerId:
+      description: |
+        Código del concesionario (Sucursal FISA System) desde donde se está generando el proceso de originación
+
+        Representa el código único asignado a la compañia con la cual se trabajar
+      example: 3
+      type: string
+      minLength: 0
+      maxLength: 20
+
+    X-UserId:
+      description: |
+        Código del usuario FISA System que está realizando el proceso
+        Registrado en la transacción 1/9.
+        Ítem catálogo catUser.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-SellerId:
+      description: |
+        Código del vendedor desde donde se está generando el proceso de originación
+        No definido en FISA System.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-BranchId:
+      description: |
+        Código de la sucursal FISA System desde cual se ejecuta la acción.
+        Registrada en la transacción 1/2.
+        Ítem catálogo catBranch.
+      example: 2
+      type: integer
+      format: int64
+
+    X-OfficeId:
+      description: |
+        Código de la oficina FISA System desde cual se ejecuta la acción.
+        Ítem catálogo catOffice.
+        Relacionada con la sucursal indicada en "branchid". 
+        Registrada en la transacción 1/2.
+      example: 1
+      type: integer
+      format: int64
+      
+    X-EnterpriseCode:
+      description: |
+        Código del Empresa o institución que invoca el servicio
+        No definido en FISA System.
+
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: MAF
+      
+    X-SysCode:
+      description: |
+        Código del Sistema que invoca el servicio.
+        No definido en FISA System.
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: SISCRED
+      
+    ######## FIN INFORMACION INYECCION SOLICITUD ORIGINACION
+
+    Info:
+      description: |
+        Información de cabecera requerida en los servicios como parte del mensaje
+      type: object
+      properties:
+        Consumer:
+          description: |
+            Información del consumidor del servicio
+          type: object
+          properties:
+            sysCode:
+              $ref: "#/components/schemas/X-SysCode"
+            enterpriseCode:
+              $ref: '#/components/schemas/X-EnterpriseCode'
+        Trace:
+          description: |
+            Información para seguimiento del servicio
+          type: object
+          required:
+            - userId
+            - carDealerId
+            - branchId
+            - officeId
+          properties:
+            conversationId:
+              $ref: '#/components/schemas/X-ConversationId'
+            userId:
+              $ref: '#/components/schemas/X-UserId'
+            carDealerId:
+              $ref: '#/components/schemas/X-CarDealerId'
+            sellerId:
+              $ref: '#/components/schemas/X-SellerId'
+            branchId:
+              $ref: '#/components/schemas/X-BranchId'
+            officeId:
+              $ref: '#/components/schemas/X-OfficeId'
+            channelId:
+              $ref: '#/components/schemas/X-ChannelId'
+
+    Result:
+      description: |
+        Resultado de la invocación al servicio
+      type: object
+      required:
+        - status
+        - description
+      properties:
+        status:
+          description: |
+            Estado de la ejecución del servicio
+
+            Los posible valores que puede tener este campo son:
+            - SUCCESS
+            - ERROR
+          type: string
+          enum:
+            - SUCESSS
+            - ERROR
+        description:
+          description: |
+            Descripción del resultado de la invocación al servicio.
+            Puede ser algún texto indicando el resultado
+          type: string
+
+        SourceError:
+          description: |
+            Información en caso de error presentado en el servicio invocado
+          type: object
+          properties:
+            code:
+              description: Código de error devuelto
+              type: string
+            description:
+              description: |
+                Descripción del error devuelto por el servicio invocado
+              type: string
+              
+    ReqHeader:
+      description: |
+        Cabecera para la invocación del servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+
+    RspHeader:
+      description: |
+        Cabecera de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+        Result:
+
+          $ref: '#/components/schemas/Result'
+          
+    ReqMessage:
+      description: |
+        Mensaje para invocación de servicios
+      type: object
+      properties:
+        ReqHeader:
+          $ref: '#/components/schemas/ReqHeader'
+
+    RspMessage:
+      description: |
+        Mensaje de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        RspHeader:
+          $ref: '#/components/schemas/RspHeader'
+
+
+        
+
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
+
+    errorTitle:
+      description: |
+        Descripcion corta leible por humanos del tipo de error. Puede estar en lenguaje local.
+      type: string
+      minLength: 0
+      maxLength: 70
+
+    errorDetail:
+      description: |
+        Texto detallado específico leible por humanos de esta instancia de error.
+
+        Además XPath puede se usado para apuntar a la novedad que está generando el error
+
+      type: string
+      minLength: 0
+      maxLength: 500
+
+    MessageCode400:
+      description: Códigos de mensajes definidos para código de error HTTP 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - FORMAT_ERROR              #gen
+        - PARAMETER_NOT_CONSISTENT  #gen
+        - PARAMETER_NOT_SUPPORTED   #gen
+        - SERVICE_INVALID           #gen
+        - RESOURCE_UNKNOWN          #gen
+        - RESOURCE_EXPIRED          #gen
+        - RESOURCE_BLOCKED          #gen
+        - TIMESTAMP_INVALID         #gen
+        - PERIOD_INVALID            #gen
+        - SCA_METHOD_UNKNOWN        #gen
+        - SCA_INVALID               #gen
+        - CONSENT_UNKNOWN           #gen
+        
+    Error400:
+      description: |
+        Definición estandarizada para reportar información de errores acorde a [RFC7807] en caso de códigos HTTP 400.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            Una referencia URI [RFC3986] que identifica el tipo de problema.
+          type: string
+          format: uri
+          minLength: 0
+          maxLength: 70
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        code:
+          $ref: "#/components/schemas/MessageCode400"
+        additionalErrors:
+          description: |
+            Lista de bloques de información de Error.
+
+            Puede ser usado si mas de un error va a ser comunicado
+          type: array
+          items: #ErrorInformation
+            description: Este es el elemento de datos para soportar la declaración de errores adicionales en el contexto de [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/errorTitle"
+              detail:
+                $ref: "#/components/schemas/errorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400"
+                
+  responses:
+    #################################
+    # Respuestas Afirmativas
+    #################################
+
+    OK_200_loanSimulation:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoanSimulationOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/loanSimulationExample"        
+          
+
+    OK_200_loanCreate:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoanCreateOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/loanCreateExample"            
+
+    OK_200_getParam:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoanGetParamOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/getParamExample"            
+
+
+    OK_200_cancelLoan:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoanCancelOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/cancelLoanExample"                       
+              
+
+    OK_200_applypayableac:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoanApplypayableaccOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/applypayableackExample"     
+              
+    
+    #################################
+    # Respuestas negativas
+    #################################
+
+    BAD_REQUEST_400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400"
+
+    UNAUTHORIZED_401:
+      description: Error de autenticación
+
+    FORBIDDEN_403:
+      description: Forbidden
+
+    INTERNAL_SERVER_ERROR_500:
+      description: Internal Server Error            
+
+
+  examples:
+    loanSimulationExample:
+      summary: Simula préstamo
+      description: Simula préstamo
+      value: {}
+    loanCreateExample:
+      summary: Crea préstamo
+      description: Crea préstamo
+      value: {}
+    getParamExample:
+      summary: Carga parametrización producto
+      description: Carga parametrización producto
+      value: {}  
+    cancelLoanExample:
+      summary: Anula préstamoa no desembolsado
+      description: Anula préstamoa no desembolsado
+      value: {}
+    applypayableackExample:
+      summary: Desembolsa préstamo
+      description: Desembolsa préstamo
+      value: {}
+      

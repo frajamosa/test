@@ -1,0 +1,1048 @@
+openapi: 3.0.1
+info:
+  title: API - Funcionalidad Libro Negro
+  description: "
+      Permite consultar, registrar, actualizar información de un cliente en el Libro Negro
+  "
+  version: 1.0.0-SNAPSHOT
+servers:
+  - url: http://localhost:9081
+    description: Generated server url
+paths:
+  /blackbook/putBlackBook/request/{codeCli}/{legalIdType}/{legalId}:
+    post:
+      tags:
+        - blackbook-rest-controller
+      summary: Actualizar registro en Libro Negro
+      operationId: putBlackBook
+
+      parameters:
+        - $ref: "#/components/parameters/codeCli"
+        - $ref: "#/components/parameters/legalIdType"
+        - $ref: "#/components/parameters/legalId"
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlackbookPutBlackBookIn'
+        required: true
+      
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_BlackbookPut'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"                 
+  
+  /blackbook/postBlackBook:
+    post:
+      tags:
+        - blackbook-rest-controller
+      summary: Registrar Cliente en Libro Negro
+      operationId: postBlackBook
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlackbookPostBlackBookIn'
+        required: true
+        
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_BlackbookPost'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"   
+          
+  /blackbook/getBlackBook/request/{codeCli}/{legalIdType}/{legalId}:
+    post:
+      tags:
+        - blackbook-rest-controller
+      summary: Consultar Cliente en Libro Negro
+      operationId: getBlackBook
+
+      parameters:
+        - $ref: "#/components/parameters/codeCli"
+        - $ref: "#/components/parameters/legalIdType"
+        - $ref: "#/components/parameters/legalId"
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlackbookGetBlackBookIn'
+        required: true   
+        
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_BlackbookGet'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"   
+          
+  /blackbook/delBlackBook/request/{codeCli}/{legalIdType}/{legalId}:
+    post:
+      tags:
+        - blackbook-rest-controller
+      summary: Eliminar registro en Libro Negro
+      operationId: delBlackBook
+      
+      parameters:
+        - $ref: "#/components/parameters/codeCli"
+        - $ref: "#/components/parameters/legalIdType"
+        - $ref: "#/components/parameters/legalId"
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlackbookDelBlackBookIn'
+        required: true      
+      
+      responses:
+        '200':
+          $ref: '#/components/responses/OK_200_BlackbookDel'
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400"
+        '401' :
+          $ref: "#/components/responses/UNAUTHORIZED_401"
+        '403' :
+          $ref: "#/components/responses/FORBIDDEN_403"
+        '500' :
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500"
+
+
+components:
+
+  headers:
+    #####################################################
+    # Reusable Response Header Elements
+    #####################################################
+
+    tokenmcm:
+      schema:
+        type: string
+
+    Location:
+      description: |
+        Localización del recurso creado.
+      schema:
+        type: string
+        format: url
+      required: false
+
+  parameters:
+    #####################################################
+    # Predefined Parameters
+    #####################################################
+    codeCli:
+      name: codeCli
+      in: path
+      description: |
+        Código cliente FISA System.
+        Registrado en la transacción 2/2.
+        Ítem catálogo catClient.
+        * 84875
+      required: true
+      schema:
+          type: number
+          
+          
+    legalIdType:
+      name: legalIdType
+      in: path
+      description: |
+        Identificación del Cliente
+        Posibles valores son:
+        * 0929359503
+      required: true
+      schema:
+        type: string
+        
+
+    legalId:
+      name: legalId
+      in: path
+      description: |
+        Tipo de identificación
+        Posibles valores son:
+        * C - RUC
+        * R - Company
+      required: true
+      schema:
+        type: string
+        enum:
+          - C
+          - R
+          
+  schemas:
+    BlackbookPutBlackBookIn:
+      type: object
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object
+          properties:      
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            blackbook:
+              $ref: '#/components/schemas/OtrBlackbook'
+            blackbookdetail:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrBlackbookdetail'
+    OtrBlackbook:
+      type: object
+      description: |
+        Cliente en libro negro.
+      properties:
+        clientid:
+          type: integer
+          format: int32
+          description: |
+            Código cliente FISA System.
+            Registrado en la transacción 2/2.
+            Ítem catálogo catClient.
+          example: 84875
+          nullable: false
+        typeid:
+          type: string
+          description: |
+            Tipo de Identificación
+            Ítem catálogo catTypeId.
+          example: C
+          nullable: false
+        identification: 
+          type: string
+          description: |
+            Identificación del Cliente.
+          example: 104111111
+          nullable: false
+        clientname:
+          type: string
+          description: |
+            Nombre del cliente.
+          example: JUAN ABEL PEREZ CARRASCO
+          nullable: false
+    OtrBlackbookdetail:
+      type: object
+      description: |
+        Detalle de registros del cliente en Libro Negro
+      properties:
+        clientid:
+          type: integer
+          format: int32
+          description: |
+            Códido cliente FISA System.
+          example: 84875
+          nullable: false
+        closingdate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha clausura o cierre.
+          example: "2022/12/10"
+          nullable: true
+        sequence:
+          type: integer
+          format: int32
+          description: |
+            Secuencia del registro.
+          example: 1
+          nullable: false
+        causalcode:
+          type: integer
+          format: int32
+          description: |
+            Código causal de registro en Libro Negro. 
+            Ítem catálogo 109.
+          example: 6
+          nullable: false
+        institutioncode:
+          type: integer
+          format: int32
+          description: |
+            Código de lavado de activos y financiamiento del terrorismo (LAFT).
+            Ítem catálogo 998.
+          example: 1
+          nullable: false
+        ccy:
+          type: integer
+          format: int32
+          description: |
+            Código moneda del monto registrado. 
+            Ítem del catálogo catCurrency. 
+          example: 1
+          nullable: true
+        amount:
+          type: number
+          format: float
+          description: |
+            Monto registrado. 
+          example: 50000.00
+          nullable: true          
+        documentnumber:
+          type: string
+          description: |
+            Número de documento del registro.
+          example: SIN ROL
+          nullable: true
+        citycode:
+          type: integer
+          format: int32
+          description: |
+            Código ISO ciudad de referencia.
+          example: CL
+          nullable: true
+        accountnumber:
+          type: integer
+          format: int32
+          description: |
+            Número de Cuenta de referencia.
+          example:
+          nullable: true
+        checknumber:
+          type: integer
+          format: int32
+          description: |
+            Número de Cheque de referencia.
+          example:
+          nullable: true
+        registrationdate:
+          type: string
+          format: date # Este es el formato estándar para fechas
+          pattern: '^\d{4}/\d{2}/\d{2}$' # Validación para el formato yyyy/mm/dd
+          description: |
+            Fecha registro en Libro Negro.
+          example: "2022/12/10"
+          nullable: true
+    BlackbookPutBlackBookOut:
+      type: object
+      description: |
+            Actualizar registro en Libro Negro 
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object            
+          properties:
+            blackbook:
+              $ref: '#/components/schemas/OtrBlackbook'
+            blackbookdetail:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrBlackbookdetail'
+            messagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: |
+                Resultado del proceso. Valores "0" - error, "null" - OK.
+              example: 
+    OtrWarnigs:
+      type: object
+      description: |
+            Listado de mensajes presentados durante la ejecución del servicio.
+      properties:
+        message:
+          type: string
+          description: |
+            Texto del mensaje.
+    BlackbookPostBlackBookIn:
+      type: object
+      description: |
+            Registrar Libro Negro
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object
+          properties:      
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            blackbook:
+              $ref: '#/components/schemas/OtrBlackbook'
+            blackbookdetail:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrBlackbookdetail'
+    BlackbookPostBlackBookOut:
+      type: object
+      description: |
+        Resultado Registro en Libro Negro
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object        
+          properties:
+            blackbook:
+              $ref: '#/components/schemas/OtrBlackbook'
+            blackbookdetail:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrBlackbookdetail'
+            messagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK. 
+    BlackbookGetBlackBookIn:
+      type: object
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object
+          properties:      
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+    BlackbookGetBlackBookOut:
+      type: object
+      description: |
+        Resultado de consulta cliente en libgro negro.
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object      
+          properties:
+            blackbook:
+              $ref: '#/components/schemas/OtrBlackbook'
+            blackbookdetail:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrBlackbookdetail'
+            messagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK. 
+    BlackbookDelBlackBookIn:
+      type: object
+      properties:
+        ReqMessage:
+          $ref: '#/components/schemas/ReqMessage'      
+        Envelop:
+          type: object
+          properties:      
+            userid:
+              type: string
+              description: |
+                Código usuario FISA System que ejecuta la acción.
+                Registrado en la transacción 1/9.
+                Ítem catálogo catUser.
+              example: 157  
+              nullable: false
+            languageid:
+              type: string
+              description: |
+                Código ISO del lenguaje del usuario.
+              enum: [es]
+              nullable: false
+            branchid:
+              type: number
+              description: |
+                Código de la sucursal FISA System desde cual se ejecuta la acción.
+                Registrada en la transacción 1/2.
+                Ítem catálogo catBranch.
+              example: 2
+              nullable: false          
+            officeid:
+              type: number
+              description: |
+                Código de la oficina FISA System desde cual se ejecuta la acción.
+                Ítem catálogo catOffice.
+                Relacionada con la sucursal indicada en "branchid". 
+                Registrada en la transacción 1/2.
+              example: 1
+              nullable: false          
+            deptoid:
+              type: number
+              description: |
+                Código del departamento FISA System desde cual se ejecuta la acción.
+                Ítem catálogo 40.
+                Registrado en la transacción 1/1.
+              example: 6
+              nullable: false          
+            terminalid:
+              type: string
+              description: |
+                Identificador del terminal cliente (IPAddress,HostName) que envia a procesar el mensaje.
+                Ítem catálogo catTerminal.
+                Registrado en la transacción 1/11.
+              example: 10.242.9.501          
+              nullable: false
+            blackbook:
+              $ref: '#/components/schemas/OtrBlackbook'
+            blackbookdetail:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrBlackbookdetail'
+    BlackbookDelBlackBookOut:
+      type: object
+      description: |
+        Resultado de eliminar registro del Libro Negro.
+      required:
+        - RspMessage
+        - Envelop
+      properties:
+        RspMessage:
+          $ref: '#/components/schemas/RspMessage'
+        Envelop:
+          type: object      
+          properties:
+            messagelist:
+              type: array
+              items:
+                $ref: '#/components/schemas/OtrWarnigs'
+            response:
+              type: number
+              description: Resultado del proceso. Valores "0" - error, "null" - OK. 
+              example: 
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+    X-ConversationId:
+      description: |
+        Identificador único de la conversación del servicio.
+
+        Por cada servicio que interviene en la orquestación se tiene un id de conversación.
+
+      example: "59491c7e-ad88-49ec-a2ad-99ddcb1f5674"
+
+      type: string
+      format: uuid
+
+    X-ChannelId:
+      description: |
+        Id del canal desde el cual se se está invocando el servicio. 
+        Ítem de catálogo 139.
+
+        Ej. de osibles Valores:
+           "2"    BOTON PAGO
+           "3"    CAJA EXPRESS
+           "5"    CAJA EXTERNA
+      type: string
+      maxLength: 50
+      example: "2"
+      
+    X-CarDealerId:
+      description: |
+        Código del concesionario (Sucursal FISA System) desde donde se está generando el proceso de originación
+
+        Representa el código único asignado a la compañia con la cual se trabajar
+      example: 3
+      type: string
+      minLength: 0
+      maxLength: 20
+
+    X-UserId:
+      description: |
+        Código del usuario FISA System que está realizando el proceso
+        Registrado en la transacción 1/9.
+        Ítem catálogo catUser.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-SellerId:
+      description: |
+        Código del vendedor desde donde se está generando el proceso de originación
+        No definido en FISA System.
+      example: 1050
+      type: integer
+      format: int64
+
+    X-BranchId:
+      description: |
+        Código de la sucursal FISA System desde cual se ejecuta la acción.
+        Registrada en la transacción 1/2.
+        Ítem catálogo catBranch.
+      example: 2
+      type: integer
+      format: int64
+
+    X-OfficeId:
+      description: |
+        Código de la oficina FISA System desde cual se ejecuta la acción.
+        Ítem catálogo catOffice.
+        Relacionada con la sucursal indicada en "branchid". 
+        Registrada en la transacción 1/2.
+      example: 1
+      type: integer
+      format: int64
+      
+    X-EnterpriseCode:
+      description: |
+        Código del Empresa o institución que invoca el servicio
+        No definido en FISA System.
+
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: MAF
+      
+    X-SysCode:
+      description: |
+        Código del Sistema que invoca el servicio.
+        No definido en FISA System.
+      type: string
+      minLength: 0
+      maxLength: 20
+      example: SISCRED
+      
+    ######## FIN INFORMACION INYECCION SOLICITUD ORIGINACION
+
+    Info:
+      description: |
+        Información de cabecera requerida en los servicios como parte del mensaje
+      type: object
+      properties:
+        Consumer:
+          description: |
+            Información del consumidor del servicio
+          type: object
+          properties:
+            sysCode:
+              $ref: "#/components/schemas/X-SysCode"
+            enterpriseCode:
+              $ref: '#/components/schemas/X-EnterpriseCode'
+        Trace:
+          description: |
+            Información para seguimiento del servicio
+          type: object
+          required:
+            - userId
+            - carDealerId
+            - branchId
+            - officeId
+          properties:
+            conversationId:
+              $ref: '#/components/schemas/X-ConversationId'
+            userId:
+              $ref: '#/components/schemas/X-UserId'
+            carDealerId:
+              $ref: '#/components/schemas/X-CarDealerId'
+            sellerId:
+              $ref: '#/components/schemas/X-SellerId'
+            branchId:
+              $ref: '#/components/schemas/X-BranchId'
+            officeId:
+              $ref: '#/components/schemas/X-OfficeId'
+            channelId:
+              $ref: '#/components/schemas/X-ChannelId'
+
+    Result:
+      description: |
+        Resultado de la invocación al servicio
+      type: object
+      required:
+        - status
+        - description
+      properties:
+        status:
+          description: |
+            Estado de la ejecución del servicio
+
+            Los posible valores que puede tener este campo son:
+            - SUCCESS
+            - ERROR
+          type: string
+          enum:
+            - SUCESSS
+            - ERROR
+        description:
+          description: |
+            Descripción del resultado de la invocación al servicio.
+            Puede ser algún texto indicando el resultado
+          type: string
+
+        SourceError:
+          description: |
+            Información en caso de error presentado en el servicio invocado
+          type: object
+          properties:
+            code:
+              description: Código de error devuelto
+              type: string
+            description:
+              description: |
+                Descripción del error devuelto por el servicio invocado
+              type: string
+              
+    ReqHeader:
+      description: |
+        Cabecera para la invocación del servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+
+    RspHeader:
+      description: |
+        Cabecera de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        Info:
+          $ref: '#/components/schemas/Info'
+        Result:
+
+          $ref: '#/components/schemas/Result'
+          
+    ReqMessage:
+      description: |
+        Mensaje para invocación de servicios
+      type: object
+      properties:
+        ReqHeader:
+          $ref: '#/components/schemas/ReqHeader'
+
+    RspMessage:
+      description: |
+        Mensaje de respuesta cuando es una respuesta que devuelve el servicio
+      type: object
+      properties:
+        RspHeader:
+          $ref: '#/components/schemas/RspHeader'
+
+
+        
+
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
+
+    errorTitle:
+      description: |
+        Descripcion corta leible por humanos del tipo de error. Puede estar en lenguaje local.
+      type: string
+      minLength: 0
+      maxLength: 70
+
+    errorDetail:
+      description: |
+        Texto detallado específico leible por humanos de esta instancia de error.
+
+        Además XPath puede se usado para apuntar a la novedad que está generando el error
+
+      type: string
+      minLength: 0
+      maxLength: 500
+
+    MessageCode400:
+      description: Códigos de mensajes definidos para código de error HTTP 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - FORMAT_ERROR              #gen
+        - PARAMETER_NOT_CONSISTENT  #gen
+        - PARAMETER_NOT_SUPPORTED   #gen
+        - SERVICE_INVALID           #gen
+        - RESOURCE_UNKNOWN          #gen
+        - RESOURCE_EXPIRED          #gen
+        - RESOURCE_BLOCKED          #gen
+        - TIMESTAMP_INVALID         #gen
+        - PERIOD_INVALID            #gen
+        - SCA_METHOD_UNKNOWN        #gen
+        - SCA_INVALID               #gen
+        - CONSENT_UNKNOWN           #gen
+        
+    Error400:
+      description: |
+        Definición estandarizada para reportar información de errores acorde a [RFC7807] en caso de códigos HTTP 400.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            Una referencia URI [RFC3986] que identifica el tipo de problema.
+          type: string
+          format: uri
+          minLength: 0
+          maxLength: 70
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        code:
+          $ref: "#/components/schemas/MessageCode400"
+        additionalErrors:
+          description: |
+            Lista de bloques de información de Error.
+
+            Puede ser usado si mas de un error va a ser comunicado
+          type: array
+          items: #ErrorInformation
+            description: Este es el elemento de datos para soportar la declaración de errores adicionales en el contexto de [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/errorTitle"
+              detail:
+                $ref: "#/components/schemas/errorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400"
+                
+  responses:
+    #################################
+    # Respuestas Afirmativas
+    #################################
+
+    OK_200_BlackbookPut:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BlackbookPutBlackBookOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/putBlackBoookExample"        
+          
+
+    OK_200_BlackbookPost:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BlackbookPostBlackBookOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/postBlackBoookExample"            
+
+    OK_200_BlackbookGet:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BlackbookGetBlackBookOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/getBlackBoookExample"            
+
+
+    OK_200_BlackbookDel:
+      description: OK
+
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BlackbookDelBlackBookOut'
+          examples:
+            "Ejemplo":
+              $ref: "#/components/examples/delBlackBoookExample"                       
+    
+    
+    #################################
+    # Respuestas negativas
+    #################################
+
+    BAD_REQUEST_400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400"
+
+    UNAUTHORIZED_401:
+      description: Error de autenticación
+
+    FORBIDDEN_403:
+      description: Forbidden
+
+    INTERNAL_SERVER_ERROR_500:
+      description: Internal Server Error            
+
+
+  examples:
+    putBlackBoookExample:
+      summary: Actualiza información de cliente en Libro Negro
+      description: Actualiza información de cliente en Libro Negro
+      value: {}
+    postBlackBoookExample:
+      summary: Registra cliente en Libro Negro
+      description: Registra cliente en Libro Negro
+      value: {}
+    getBlackBoookExample:
+      summary: Consulta cliente en Libro Negro
+      description: Consulta cliente en Libro Negro
+      value: {}  
+    delBlackBoookExample:
+      summary: Elimina registro de cliente en Libro Negro
+      description: Elimina registro de cliente en Libro Negro
+      value: {}        
